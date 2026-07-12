@@ -1,0 +1,14 @@
+{
+    "email":"tjordi132@gmail.com",
+    "password":"pass"
+}
+
+
+{
+    "product_id":"1",
+    "qunatity":"3"
+}
+
+
+
+ console.log(error.response.data.message);
