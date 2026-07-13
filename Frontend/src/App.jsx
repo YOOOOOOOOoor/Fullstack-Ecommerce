@@ -1,42 +1,55 @@
-import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import API from "../API/api.js";
 
-import Navi from "./components/Navi";
-import Home from "./pages/customer/Home.jsx";
+// layouts
+import CustomerLayout from "./layouts/CustomerLayout";
+import AdminLayout from "./layouts/AdminLayout";
+
+// auth
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Success from "./pages/Success";
+
+// customer
+import Home from "./pages/customer/Home";
+import ProductsCustomer from "./pages/customer/Products";
+import SinglePage from "./pages/customer/SinglePage";
+import Cart from "./pages/customer/Cart";
+import CheckoutPage from "./pages/customer/CheckoutPage";
+import Order from "./pages/customer/Orders";
+import OrderDetails from "./pages/customer/OrderDetails";
+import CustomerRoute from "./pages/customer/CustomerRoute";
+
+// admin
+import Dashboard from "./pages/Admin/Dashboard.jsx";
+import AdminRoute from "./pages/Admin/AdminRoute ";
 import Controllers from "./pages/Admin/Controllers";
-import Products from "./pages/Admin/Products.jsx";
-import Add from "./pages/Admin/products/Add.jsx";
-import Edit from "./pages/Admin/products/Edit.jsx";
-import AdminRoute from "./pages/Admin/AdminRoute .jsx";
-import AdminLayout from "./pages/Admin/AdminLayout.jsx";
-import ProductsCustomer from "./pages/customer/Products.jsx";
-import SinglePage from "./pages/customer/SinglePage.jsx";
-import CustomerRoute from "./pages/customer/CustomerRoute.jsx";
-import Cart from "./pages/customer/Cart.jsx";
-import CheckoutPage from "./pages/customer/CheckoutPage.jsx";
-import Success from "./pages/Success.jsx";
-import Order from "./pages/customer/Orders.jsx";
-import OrderDetails from "./pages/customer/OrderDetails.jsx";
+import Products from "./pages/Admin/Products";
+import Orders from "./pages/Admin/AdminOrders";
+import AdminOrderDetail from "./pages/Admin/AdminOrderDetail";
+import Add from "./pages/Admin/products/Add";
+import Edit from "./pages/Admin/products/Edit";
 
 API.defaults.withCredentials = true;
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await API.get("/auth/me");
         setUser(res.data.user);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.log(err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchUser();
   }, []);
 
@@ -44,58 +57,75 @@ function App() {
 
   return (
     <Router>
-      <Navi user={user} setUser={setUser} />
       <Routes>
-        <Route path="/" element={<Home user={user} setUser={setUser} />} />
+        {/* ---------- CUSTOMER LAYOUT ---------- */}
+
+        <Route element={<CustomerLayout user={user} setUser={setUser} />}>
+          <Route path="/" element={<Home user={user} />} />
+
+          <Route
+            path="/products"
+            element={<ProductsCustomer user={user} setUser={setUser} />}
+          />
+
+          <Route
+            path="/products/:id"
+            element={<SinglePage user={user} setUser={setUser} />}
+          />
+
+          <Route path="/success" element={<Success />} />
+
+          <Route
+            path="/cart"
+            element={
+              <CustomerRoute user={user}>
+                <Cart user={user} setUser={setUser} />
+              </CustomerRoute>
+            }
+          />
+
+          <Route
+            path="/checkout"
+            element={
+              <CustomerRoute user={user}>
+                <CheckoutPage user={user} setUser={setUser} />
+              </CustomerRoute>
+            }
+          />
+
+          <Route
+            path="/order"
+            element={
+              <CustomerRoute user={user}>
+                <Order user={user} setUser={setUser} />
+              </CustomerRoute>
+            }
+          />
+
+          <Route
+            path="/order/:id"
+            element={
+              <CustomerRoute user={user}>
+                <OrderDetails user={user} setUser={setUser} />
+              </CustomerRoute>
+            }
+          />
+        </Route>
+
+        {/* ---------- AUTH ---------- */}
+
         <Route
           path="/login"
           element={<Login user={user} setUser={setUser} />}
         />
+
         <Route
           path="/register"
           element={<Register user={user} setUser={setUser} />}
         />
-        <Route
-          path="/products"
-          element={<ProductsCustomer user={user} setUser={setUser} />}
-        />
-        <Route
-          path="/products/:id"
-          element={<SinglePage user={user} setUser={setUser} />}
-        />
-        <Route path="/success" element={<Success />} />
-        <Route
-          path="/cart"
-          element={
-            <CustomerRoute user={user}>
-              <Cart user={user} setUser={setUser} />
-            </CustomerRoute>
-          }
-        />
-        <Route
-          path="/order"
-          element={
-            <CustomerRoute user={user}>
-              <Order user={user} setUser={setUser} />
-            </CustomerRoute>
-          }
-        />
-        <Route
-          path="/order/:id"
-          element={
-            <CustomerRoute user={user}>
-              <OrderDetails user={user} setUser={setUser} />
-            </CustomerRoute>
-          }
-        />
-        <Route
-          path="/checkout"
-          element={
-            <CustomerRoute user={user}>
-              <CheckoutPage user={user} setUser={setUser} />
-            </CustomerRoute>
-          }
-        />
+
+        {/* ---------- ADMIN ---------- */}
+
         <Route
           path="/admin"
           element={
@@ -104,36 +134,26 @@ function App() {
             </AdminRoute>
           }
         >
+          <Route index element={<Dashboard />} />
+
           <Route path="products" element={<Products />} />
-          <Route path="category" element={<Controllers />} />
+
           <Route
             path="products/add"
             element={<Add user={user} setUser={setUser} />}
           />
+
           <Route
             path="products/:id"
             element={<Edit user={user} setUser={setUser} />}
           />
+
+          <Route path="category" element={<Controllers />} />
+
+          <Route path="orders" element={<Orders />} />
+
+          <Route path="orders/:id" element={<AdminOrderDetail />} />
         </Route>
-        {/* 
-        <Route
-          path="/category"
-          element={<Controllers user={user} setUser={setUser} />}
-        />
-        <Route
-          path="/products"
-          element={<Products user={user} setUser={setUser} />}
-        /> */}
-        /*** */
-        {/* <Route
-          path="/products/add"
-          element={<Add user={user} setUser={setUser} />}
-        />
-        <Route
-          path="/products/:id"
-          element={<Edit user={user} setUser={setUser} />}
-        /> */}
-        /***** */
       </Routes>
     </Router>
   );

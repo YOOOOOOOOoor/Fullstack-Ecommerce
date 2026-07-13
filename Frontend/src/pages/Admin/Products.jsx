@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import Edit from "./products/Edit";
+// import Edit from "./products/Edit";
 
 import { useState, useEffect } from "react";
 import API from "../../../API/api.js";

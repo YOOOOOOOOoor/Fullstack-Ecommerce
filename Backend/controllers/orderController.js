@@ -139,7 +139,7 @@ export const updateOrderStatus = async (req, res) => {
     const allowedStatuses = [
       "awaiting_payment",
       "processing",
-      "shipping",
+      "shipped",
       "delivered",
       "cancelled",
     ];
@@ -174,55 +174,146 @@ export const updateOrderStatus = async (req, res) => {
 //admin get all
 export const getOrdersAdmin = async (req, res) => {
   try {
-    const user_id = req.user.id;
+    const {
+      search = "",
+      order_status = "",
+      payment_status = "",
+      page = 1,
+      limit = 5,
+    } = req.query;
 
-    const orders = await pool.query(`
-SELECT
-    o.id,
-    o.total_price,
-    o.payment_status,
-    o.order_status,
-    o.created_at,
+    const currentPage = Number(page);
+    const pageLimit = Number(limit);
+    const offset = (currentPage - 1) * pageLimit;
 
-    u.name,
-    u.email,
+    const values = [];
+    const conditions = [];
 
-    p.title,
-    p.image_url,
+    // Search
+    if (search) {
+      values.push(`%${search}%`);
 
-    (
-        SELECT COUNT(*)
+      conditions.push(`
+        (
+          CAST(o.id AS TEXT) ILIKE $${values.length}
+          OR u.name ILIKE $${values.length}
+          OR u.email ILIKE $${values.length}
+          OR p.title ILIKE $${values.length}
+        )
+      `);
+    }
+
+    // Order status filter
+    if (order_status && order_status !== "all") {
+      values.push(order_status);
+
+      conditions.push(`o.order_status = $${values.length}`);
+    }
+
+    // Payment status filter
+    if (payment_status && payment_status !== "all") {
+      values.push(payment_status);
+
+      conditions.push(`o.payment_status = $${values.length}`);
+    }
+
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    // Add pagination values
+    values.push(pageLimit);
+    const limitIndex = values.length;
+
+    values.push(offset);
+    const offsetIndex = values.length;
+
+    const orders = await pool.query(
+      `
+      SELECT
+        o.id,
+        o.total_price,
+        o.payment_status,
+        o.order_status,
+        o.created_at,
+
+        u.name,
+        u.email,
+
+        p.title,
+        p.image_url,
+
+        (
+          SELECT COUNT(*)
+          FROM order_items
+          WHERE order_id = o.id
+        ) AS item_count
+
+      FROM orders o
+
+      JOIN users u
+      ON o.user_id = u.id
+
+      JOIN order_items oi
+      ON oi.id = (
+        SELECT MIN(id)
         FROM order_items
         WHERE order_id = o.id
-    ) AS item_count
+      )
 
-FROM orders o
+      JOIN products p
+      ON p.id = oi.product_id
 
-JOIN users u
-ON o.user_id = u.id
 
-JOIN order_items oi
-ON oi.id = (
-    SELECT MIN(id)
-    FROM order_items
-    WHERE order_id = o.id
-)
+      ${whereClause}
 
-JOIN products p
-ON p.id = oi.product_id
 
-ORDER BY o.created_at DESC;
-`);
+      ORDER BY o.created_at DESC
+
+      LIMIT $${limitIndex}
+      OFFSET $${offsetIndex}
+      `,
+      values,
+    );
 
     const formattedOrders = orders.rows.map((order) => ({
       ...order,
+
       display_title:
         Number(order.item_count) > 1
-          ? `${order.title} +${Number(order.item_count) - 1} more item${Number(order.item_count) - 1 > 1 ? "s" : ""}`
+          ? `${order.title} +${Number(order.item_count) - 1} more item${
+              Number(order.item_count) - 1 > 1 ? "s" : ""
+            }`
           : order.title,
     }));
 
-    res.status(200).json(formattedOrders);
+    const countResult = await pool.query(
+      `
+  SELECT COUNT(DISTINCT o.id)
+  FROM orders o
+
+  JOIN users u
+  ON o.user_id = u.id
+
+  JOIN order_items oi
+  ON oi.order_id = o.id
+
+  JOIN products p
+  ON p.id = oi.product_id
+
+  ${whereClause}
+  `,
+      values.slice(0, values.length - 2),
+    );
+
+    const totalOrders = countResult.rows[0].count;
+    const totalPages = Math.ceil(totalOrders / pageLimit);
+
+    res.status(200).json({
+      orders: formattedOrders,
+      page: currentPage,
+      limit: pageLimit,
+      totalPages,
+    });
   } catch (error) {
     console.error(error);
 
@@ -290,6 +381,9 @@ ORDER BY oi.id;
       order_status: first.order_status,
       payment_method: first.payment_method,
       created_at: first.created_at,
+
+      name: first.name,
+      email: first.email,
 
       items: order.rows.map((item) => ({
         product_id: item.product_id,

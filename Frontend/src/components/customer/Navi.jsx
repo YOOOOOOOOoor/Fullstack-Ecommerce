@@ -1,6 +1,6 @@
 // import React from "react";
 import { Link } from "react-router-dom";
-import API from "../../API/api.js";
+import API from "../../../API/api.js";
 import { useNavigate } from "react-router-dom";
 
 const Navi = ({ user, setUser }) => {
@@ -43,14 +43,9 @@ const Navi = ({ user, setUser }) => {
           </div>
         )}
         {user && user.role === "admin" && (
-          <div>
-            <Link to="/admin/category" className="text-white">
-              category
-            </Link>
-            <Link to="/admin/products" className="text-white">
-              Products
-            </Link>
-          </div>
+          <Link to="/admin/products" className="text-white">
+            Admin Dashboard
+          </Link>
         )}
       </div>
       <div>
