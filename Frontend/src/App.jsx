@@ -17,7 +17,10 @@ import ProductsCustomer from "./pages/customer/Products.jsx";
 import SinglePage from "./pages/customer/SinglePage.jsx";
 import CustomerRoute from "./pages/customer/CustomerRoute.jsx";
 import Cart from "./pages/customer/Cart.jsx";
-// import Delete from "./pages/Admin/products/Delete.jsx";
+import CheckoutPage from "./pages/customer/CheckoutPage.jsx";
+import Success from "./pages/Success.jsx";
+import Order from "./pages/customer/Orders.jsx";
+import OrderDetails from "./pages/customer/OrderDetails.jsx";
 
 API.defaults.withCredentials = true;
 function App() {
@@ -60,11 +63,36 @@ function App() {
           path="/products/:id"
           element={<SinglePage user={user} setUser={setUser} />}
         />
+        <Route path="/success" element={<Success />} />
         <Route
           path="/cart"
           element={
             <CustomerRoute user={user}>
               <Cart user={user} setUser={setUser} />
+            </CustomerRoute>
+          }
+        />
+        <Route
+          path="/order"
+          element={
+            <CustomerRoute user={user}>
+              <Order user={user} setUser={setUser} />
+            </CustomerRoute>
+          }
+        />
+        <Route
+          path="/order/:id"
+          element={
+            <CustomerRoute user={user}>
+              <OrderDetails user={user} setUser={setUser} />
+            </CustomerRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <CustomerRoute user={user}>
+              <CheckoutPage user={user} setUser={setUser} />
             </CustomerRoute>
           }
         />

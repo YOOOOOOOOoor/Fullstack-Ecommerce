@@ -126,7 +126,7 @@ const Products = () => {
           params: {
             ...form,
             page,
-            limit: 1,
+            limit: 5,
           },
         });
 

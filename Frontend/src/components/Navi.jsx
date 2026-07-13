@@ -32,6 +32,9 @@ const Navi = ({ user, setUser }) => {
             <Link to="/cart" className="text-white">
               Cart
             </Link>
+            <Link to="/order" className="text-white">
+              Orders
+            </Link>
           </div>
         ) : (
           <div className="text-white">

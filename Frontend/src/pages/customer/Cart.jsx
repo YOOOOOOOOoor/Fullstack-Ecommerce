@@ -1,7 +1,9 @@
 import API from "../../../API/api.js";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
   const [p, setP] = useState(1);
 
@@ -99,6 +101,12 @@ const Cart = () => {
           <p>Total: ${totalAmount}</p>
         </div>
       </div>
+      <button
+        className="border border-indigo-600 bg-cyan-600 text-white px-4 py-2 rounded font-medium"
+        onClick={() => navigate("/checkout")}
+      >
+        Checkout
+      </button>
     </div>
   );
 };
