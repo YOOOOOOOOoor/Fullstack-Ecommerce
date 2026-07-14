@@ -28,14 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -73,6 +66,18 @@ const Products = () => {
       const res = await API.post("/cart", {
         product_id,
         quantity,
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
+  const addWishList = async (id) => {
+    let product_id = id;
+    try {
+      const res = await API.post("/wishlist", {
+        product_id,
       });
       console.log(res.data);
     } catch (error) {
@@ -145,211 +150,291 @@ const Products = () => {
   // }, [products]);
 
   return (
-    <div className=" flex flex-col items-center justify-center w-[100%] bg-gray-100">
-      <div className=" flex w-298">
-        <div className="w-[50%]">
-          <Field className="w-[100%]">
-            <InputGroup>
-              <InputGroupAddon>
-                <SearchIcon />
-              </InputGroupAddon>
-              <InputGroupInput
-                placeholder="Search..."
-                onChange={(e) => setForm({ ...form, search: e.target.value })}
-              />
-            </InputGroup>
-          </Field>
-        </div>
+    <div className="min-h-screen bg-gray-50 px-6 py-10">
+      {/* Filters */}
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border p-6 mb-8">
+        <div className="grid md:grid-cols-4 gap-5">
+          {/* Search */}
+          <div className="md:col-span-2">
+            <Field>
+              <InputGroup>
+                <InputGroupAddon>
+                  <SearchIcon />
+                </InputGroupAddon>
 
-        <div className="w-[50%] flex  justify-around">
-          <div className="w-[20%]">
-            <label htmlFor="">{form.price}</label>
+                <InputGroupInput
+                  placeholder="Search products..."
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      search: e.target.value,
+                    })
+                  }
+                />
+              </InputGroup>
+            </Field>
+          </div>
+
+          {/* Price */}
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-sm text-gray-500">Max Price</span>
+
+              <span className="font-semibold">${form.price}</span>
+            </div>
+
             <Slider
-              value={form.price}
+              value={[form.price]}
               max={5000}
               step={10}
-              className="w-85 bg-red-900"
-              onValueChange={(value) => setForm({ ...form, price: value })}
+              onValueChange={(value) =>
+                setForm({
+                  ...form,
+                  price: value,
+                })
+              }
             />
           </div>
-          <div>
-            <Select
-              value={form.category}
-              onValueChange={(value) => setForm({ ...form, category: value })}
-            >
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue>
-                  {form.category === "all"
-                    ? "All"
-                    : category.find((c) => String(c.id) === form.category)
-                        ?.name || "Select a Category"}
-                </SelectValue>
-                {/* <SelectValue placeholder="Select a Category" /> */}
-              </SelectTrigger>
 
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Category</SelectLabel>
-                  <SelectItem key={"all"} value={"all"}>
-                    All
-                  </SelectItem>
-                  {category.map((c) => (
-                    <SelectItem
-                      key={c.id}
-                      value={String(c.id)}
-                      className={"w-[100%]"}
-                    >
-                      {c.name || String(c.id)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Select
-              value={form.color}
-              onValueChange={(value) => setForm({ ...form, color: value })}
-            >
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue>
-                  {form.color === "all" ? (
-                    "All"
-                  ) : form.color ? (
-                    <div
-                      className="w-5 h-5 rounded-full border"
-                      style={{
-                        backgroundColor: color.find(
-                          (c) => c.color === form.color,
-                        )?.color,
-                      }}
-                    />
-                  ) : (
-                    "Select a Color"
-                  )}
-                </SelectValue>
-                {/* <SelectValue placeholder="Select a Category" /> */}
-              </SelectTrigger>
+          {/* Category */}
+          <Select
+            value={form.category}
+            onValueChange={(value) =>
+              setForm({
+                ...form,
+                category: value,
+              })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
 
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Color</SelectLabel>
-                  <SelectItem value={"all"}>All</SelectItem>
-                  {color.map((c) => (
-                    <SelectItem key={c.id} value={String(c.color)}>
-                      <div
-                        className="w-5 h-5 rounded-full"
-                        style={{ backgroundColor: c.color }}
-                      ></div>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+
+              {category.map((c) => (
+                <SelectItem key={c.id} value={String(c.id)}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Colors */}
+        <div className="mt-5 flex gap-3 items-center">
+          <span className="text-sm text-gray-500">Colors:</span>
+
+          <button
+            onClick={() =>
+              setForm({
+                ...form,
+                color: "all",
+              })
+            }
+            className="border rounded-full px-3 py-1 text-sm"
+          >
+            All
+          </button>
+
+          {color.map((c) => (
+            <button
+              key={c.id}
+              onClick={() =>
+                setForm({
+                  ...form,
+                  color: c.color,
+                })
+              }
+              className={`
+      w-8
+      h-8
+      rounded-full
+      border-2
+      transition
+      ${
+        form.color === c.color
+          ? "ring-2 ring-indigo-600 ring-offset-2"
+          : "hover:ring-2 hover:ring-gray-300"
+      }
+    `}
+              style={{
+                backgroundColor: c.color,
+              }}
+            />
+          ))}
         </div>
       </div>
-      <div className=" w-[70%]">
-        <div className="overflow-hidden rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[200px]">Product</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Color</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead>Created </TableHead>
-                <TableHead className="w-[200px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((c) => (
-                <TableRow key={c.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={c.image_url}
-                        alt={c.title}
-                        className="w-15 h-10 rounded-md object-cover"
-                      />
-                      <p>{c.title}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{c.category_name}</TableCell>
-                  <TableCell>
-                    <div
-                      className="w-5 h-5 rounded-full"
-                      style={{ backgroundColor: c.color }}
-                    ></div>
-                  </TableCell>
-                  <TableCell>${c.price}</TableCell>
-                  <TableCell className={" "}>
-                    <p> {c.stock} </p>
-                  </TableCell>
-                  <TableCell>
-                    {c.created_at
-                      ? new Date(c.created_at).toLocaleDateString("en-GB")
-                      : "-"}
-                  </TableCell>
-                  <div>
-                    <TableCell>
-                      <Button onClick={() => addCarts(c.id)}>
-                        Add to cart
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button>WishList</Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button onClick={() => navigate(`/products/${c.id}`)}>
-                        View
-                      </Button>
-                    </TableCell>
-                  </div>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (page > 1) setPage(page - 1);
-                }}
-              />
-            </PaginationItem>
 
-            {[...Array(totalPages)].map((_, index) => (
-              <PaginationItem key={index}>
-                <PaginationLink
+      {/* Products */}
+
+      <div className="max-w-7xl mx-auto">
+        <div
+          className="
+        grid 
+        sm:grid-cols-2 
+        lg:grid-cols-3 
+        xl:grid-cols-4 
+        gap-6
+      "
+        >
+          {products.map((p) => (
+            <div
+              key={p.id}
+              className="
+          bg-white 
+          rounded-xl 
+          border
+          shadow-sm
+          overflow-hidden
+          hover:shadow-lg
+          transition
+          "
+            >
+              {/* Image */}
+              <div
+                onClick={() => navigate(`/products/${p.id}`)}
+                className="cursor-pointer"
+              >
+                <img
+                  src={p.image_url}
+                  alt={p.title}
+                  className="
+              w-full
+              h-56
+              object-cover
+              "
+                />
+              </div>
+
+              {/* Content */}
+              <div className="p-5">
+                <h2
+                  className="
+            font-semibold
+            text-lg
+            truncate
+            "
+                >
+                  {p.title}
+                </h2>
+
+                <p
+                  className="
+            text-gray-500
+            text-sm
+            mt-2
+            line-clamp-2
+            "
+                >
+                  {p.description}
+                </p>
+
+                <div
+                  className="
+            flex
+            justify-between
+            items-center
+            mt-4
+            "
+                >
+                  <p
+                    className="
+              text-xl
+              font-bold
+              "
+                  >
+                    ${p.price}
+                  </p>
+
+                  <div
+                    className="
+                w-6
+                h-6
+                rounded-full
+                border
+                "
+                    style={{
+                      backgroundColor: p.color,
+                    }}
+                  />
+                </div>
+
+                <p
+                  className="
+            text-sm
+            text-green-600
+            mt-3
+            "
+                >
+                  {p.stock} available
+                </p>
+
+                <div
+                  className="
+            flex
+            gap-2
+            mt-5
+            "
+                >
+                  <Button className="flex-1" onClick={() => addCarts(p.id)}>
+                    Add Cart
+                  </Button>
+
+                  <Button variant="outline" onClick={() => addWishList(p.id)}>
+                    ♡
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+
+        <div className="mt-10 flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
                   href="#"
-                  isActive={page === index + 1}
                   onClick={(e) => {
                     e.preventDefault();
-                    setPage(index + 1);
-                  }}
-                >
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
 
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (page < totalPages) setPage(page + 1);
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+                    if (page > 1) setPage(page - 1);
+                  }}
+                />
+              </PaginationItem>
+
+              {[...Array(totalPages)].map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === index + 1}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(index + 1);
+                    }}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    if (page < totalPages) setPage(page + 1);
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import {
   getProductCustomer,
   getProductsCustomer,
   getColor,
+  getFeaturedProducts,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -19,6 +20,7 @@ const router = express.Router();
 router.get("/color", getColor);
 router.get("/customer", getProductsCustomer);
 router.get("/customer/:id", getProductCustomer);
+router.get("/featured", getFeaturedProducts);
 
 // Admin
 router.post("/", protect, Admin, upload.single("image"), createProduct);

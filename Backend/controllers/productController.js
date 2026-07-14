@@ -3,15 +3,23 @@ import { v2 as cloudinary } from "cloudinary";
 
 export const createProduct = async (req, res) => {
   try {
-    const { title, description, price, color, category_id, stock, status } =
-      req.body;
+    const {
+      title,
+      description,
+      price,
+      color,
+      category_id,
+      stock,
+      status,
+      featured,
+    } = req.body;
 
     if (
       !title ||
       !description ||
       !price ||
       !category_id ||
-      !stock ||
+      stock === undefined ||
       !status ||
       !color
     ) {
@@ -24,7 +32,9 @@ export const createProduct = async (req, res) => {
     const image_public_id = req.file.filename;
 
     const product = await pool.query(
-      `insert into products (title,description,price,color,category_id,stock,status,image_url,image_public_id) values ($1,$2,$3,$4,$5,$6,$7,$8,$9) returning *`,
+      `insert into products 
+(title,description,price,color,category_id,stock,status,featured,image_url,image_public_id) 
+values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning *`,
       [
         title,
         description,
@@ -33,6 +43,7 @@ export const createProduct = async (req, res) => {
         category_id,
         Number(stock),
         status,
+        featured === "true",
         image_url,
         image_public_id,
       ],
@@ -165,7 +176,7 @@ export const getProductsCustomer = async (req, res) => {
       FROM products
       LEFT JOIN categories
         ON categories.id = products.category_id
-      WHERE 1=1
+      WHERE products.status = 'published' and products.stock > 0
     `;
 
     let countQuery = `
@@ -173,7 +184,7 @@ export const getProductsCustomer = async (req, res) => {
       FROM products
       LEFT JOIN categories
         ON categories.id = products.category_id
-      WHERE 1=1
+      WHERE products.status = 'published' and products.stock > 0
     `;
 
     const values = [];
@@ -275,8 +286,16 @@ export const getProductCustomer = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, price, color, category_id, stock, status } =
-      req.body;
+    const {
+      title,
+      description,
+      price,
+      color,
+      category_id,
+      stock,
+      status,
+      featured,
+    } = req.body;
     const checkProduct = await pool.query(
       `select * from products where id=$1`,
       [id],
@@ -295,7 +314,21 @@ export const updateProduct = async (req, res) => {
     }
     const result = await pool.query(
       `
-    update products set title=$1,description=$2,price=$3,color=$4,category_id=$5,stock=$6,status=$7,image_url=$8,image_public_id=$9, updated_at = NOW() where id=$10  returning *`,
+   update products 
+set 
+title=$1,
+description=$2,
+price=$3,
+color=$4,
+category_id=$5,
+stock=$6,
+status=$7,
+featured=$8,
+image_url=$9,
+image_public_id=$10,
+updated_at = NOW()
+where id=$11
+returning *`,
       [
         title,
         description,
@@ -304,6 +337,7 @@ export const updateProduct = async (req, res) => {
         category_id,
         stock,
         status,
+        featured === "true",
         imageUrl,
         imagePublicId,
         id,
@@ -334,5 +368,31 @@ export const deleteProduct = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getFeaturedProducts = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+        products.*,
+        categories.name AS category_name
+      FROM products
+      LEFT JOIN categories
+      ON categories.id = products.category_id
+      WHERE products.featured=true
+      AND products.status='published'
+      ORDER BY products.created_at DESC
+      LIMIT 8
+      `,
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error",
+    });
   }
 };

@@ -94,6 +94,8 @@ CREATE TABLE products (
 
     status product_status DEFAULT 'draft',
 
+    featured BOOLEAN DEFAULT FALSE,
+
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -155,7 +157,7 @@ CREATE TABLE products (
     -- 12. REVIEWS
     -- =========================
     CREATE TABLE reviews (
-        id SERIAL PRIMARY KEY,
+        id SERIAL PRIMARY KEY,  
         user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
         rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
@@ -181,6 +183,7 @@ CREATE TABLE products (
         total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
         tracking_number VARCHAR(100),
         notes TEXT,
+        tx_ref VARCHAR(100),
         expires_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()

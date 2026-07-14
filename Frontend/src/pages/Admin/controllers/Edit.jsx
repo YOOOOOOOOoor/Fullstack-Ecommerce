@@ -51,7 +51,7 @@ const Edit = ({ onSuccess, id }) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">
+          <Button variant="outline" className="cursor-pointer">
             Edit Category
           </Button>
         }

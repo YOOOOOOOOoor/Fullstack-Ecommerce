@@ -51,6 +51,7 @@ const Edit = () => {
     status: "draft",
     category_id: "",
     image: null,
+    featured: false,
   });
 
   useEffect(() => {
@@ -85,6 +86,7 @@ const Edit = () => {
           status: res.data.status,
           image_url: res.data.image_url,
           created_at: res.data.created_at,
+          featured: res.data.featured,
         });
         console.log(form);
       } catch (error) {
@@ -106,6 +108,7 @@ const Edit = () => {
       data.append("status", form.status);
       data.append("category_id", form.category_id);
       data.append("image", form.image);
+      data.append("featured", form.featured);
 
       const res = await API.put(`/products/${id}`, data);
 
@@ -141,100 +144,135 @@ const Edit = () => {
   };
 
   return (
-    <div className="w-[100%] flex  justify-around ">
-      <div>
-        <button onClick={() => navigate("/admin/products")}>Go back</button>
-      </div>
-      <div className="">
-        <div>
-          <h1 className="text-2xl font-bold"> New product</h1>
-          <p>
-            Add a product to your catalogue. You can save as draft or publish
-            immediately.
-          </p>
-        </div>
-        <div>
-          <form>
+    <div className="min-h-screen bg-gray-50 px-6 py-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Section */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
+
+            <p className="text-gray-500 mt-2">
+              Update your product details, inventory, and publishing status.
+            </p>
+          </div>
+
+          {/* Details Card */}
+          <div className="bg-white rounded-xl border shadow-sm p-6">
             <FieldGroup>
               <FieldSet>
-                <FieldLegend>Details</FieldLegend>
-                <FieldGroup>
+                <FieldLegend className="text-xl font-semibold mb-5">
+                  Product Details
+                </FieldLegend>
+
+                <FieldGroup className="space-y-6">
                   <Field>
-                    <FieldLabel htmlFor="checkout-7j9-card-name-43j">
-                      Title
-                    </FieldLabel>
+                    <FieldLabel>Product Title</FieldLabel>
+
                     <Input
-                      id="checkout-7j9-card-name-43j"
                       placeholder="Premium wireless mouse"
                       value={form.title}
                       onChange={(e) =>
-                        setForm({ ...form, title: e.target.value })
+                        setForm({
+                          ...form,
+                          title: e.target.value,
+                        })
                       }
+                      className="h-11"
                       required
                     />
                   </Field>
+
                   <Field>
-                    <FieldLabel htmlFor="checkout-7j9-optional-comments">
-                      Description
-                    </FieldLabel>
+                    <FieldLabel>Description</FieldLabel>
+
                     <Textarea
-                      id="checkout-7j9-optional-comments"
                       placeholder="Tell your customers what they can expect from this product."
                       value={form.description}
                       onChange={(e) =>
-                        setForm({ ...form, description: e.target.value })
+                        setForm({
+                          ...form,
+                          description: e.target.value,
+                        })
                       }
+                      className="min-h-32 resize-none"
                       required
                     />
                   </Field>
                 </FieldGroup>
               </FieldSet>
             </FieldGroup>
-          </form>
-        </div>
-        <div>
-          <Field>
-            <FieldLabel htmlFor="picture">Picture</FieldLabel>
-            <Input
-              id="picture"
-              type="file"
-              accept="image/*"
-              onChange={handleChange}
-            />
-            <FieldDescription>Select a picture to upload.</FieldDescription>
-          </Field>
+          </div>
 
-          {(preview || form.image_url) && (
-            <div>
-              <img
-                src={preview || form.image_url}
-                alt=""
-                className="h-40 w-40 rounded-md object-cover"
+          {/* Image Card */}
+          <div className="bg-white rounded-xl border shadow-sm p-6">
+            <Field>
+              <FieldLabel>Product Image</FieldLabel>
+
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleChange}
+                className="cursor-pointer"
               />
-            </div>
-          )}
+
+              <FieldDescription>
+                Upload a new image if you want to replace the current one.
+              </FieldDescription>
+            </Field>
+
+            {(preview || form.image_url) && (
+              <div className="mt-5">
+                <img
+                  src={preview || form.image_url}
+                  alt={form.title}
+                  className="h-48 w-48 rounded-xl object-cover border"
+                />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="  w-[30%]">
-        <div>
-          <Button className="" onClick={addProduct}>
-            Save Edit
-          </Button>
-          <div>
+
+        {/* Right Section */}
+        <div className="space-y-6">
+          {/* Actions */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
+            <div className="flex gap-3">
+              <Button onClick={addProduct} className="flex-1 h-11">
+                Save Edit
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => navigate("/admin/products")}
+                className="flex-1 h-11"
+              >
+                Go Back
+              </Button>
+            </div>
+
             <AlertDialog>
               <AlertDialogTrigger
-                render={<Button variant="outline">Delete</Button>}
+                render={
+                  <Button variant="destructive" className="w-full h-11">
+                    Delete Product
+                  </Button>
+                }
               />
+
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete
-                    your account from our servers.
+                    this product from your store.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
+
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
+
                   <AlertDialogAction onClick={deleteProduct}>
                     Continue
                   </AlertDialogAction>
@@ -242,76 +280,146 @@ const Edit = () => {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="publish"
-            checked={form.status === "published"}
-            onCheckedChange={(checked) =>
-              setForm({
-                ...form,
-                status: checked ? "published" : "draft",
-              })
-            }
-          />
-          <Label htmlFor="publish">
-            {form.status === "published" ? "Published" : "Draft"}
-          </Label>
-        </div>
-        <div>
-          <Label htmlFor="input-price">Price</Label>
-          <Input
-            placeholder="120"
-            type={"number"}
-            min={0}
-            id={"input-price"}
-            required
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
-          />
-          <Label htmlFor="input-stock">Stock</Label>
-          <Input
-            placeholder="50"
-            type={"number"}
-            min={0}
-            id={"input-stock"}
-            required
-            value={form.stock}
-            onChange={(e) => setForm({ ...form, stock: e.target.value })}
-          />
-        </div>
-        <div>
-          <Select
-            value={form.category_id}
-            onValueChange={(value) => setForm({ ...form, category_id: value })}
-          >
-            <SelectTrigger className="w-full max-w-48">
-              <SelectValue>
-                {category.find((c) => String(c.id) === form.category_id)
-                  ?.name || "Select a Category"}
-              </SelectValue>
-            </SelectTrigger>
 
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Category</SelectLabel>
+          {/* Status */}
+          <div className="bg-white rounded-xl border shadow-sm p-6">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="publish">Product Status</Label>
 
-                {category.map((c) => (
-                  <SelectItem key={c.id} value={String(c.id)}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <div>
-            <Input
-              type="color"
-              defaultValue="#3b82f6"
-              className="h-10 w-16 p-1 cursor-pointer"
-              value={form.color}
-              onChange={(e) => setForm({ ...form, color: e.target.value })}
-            />
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="publish"
+                  checked={form.status === "published"}
+                  onCheckedChange={(checked) =>
+                    setForm({
+                      ...form,
+                      status: checked ? "published" : "draft",
+                    })
+                  }
+                />
+
+                <span className="text-sm text-gray-600">
+                  {form.status === "published" ? "Published" : "Draft"}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-5">
+              <Label htmlFor="featured">Featured?</Label>
+
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="featured"
+                  checked={form.featured}
+                  onCheckedChange={(checked) =>
+                    setForm({
+                      ...form,
+                      featured: checked,
+                    })
+                  }
+                />
+
+                <span className="text-sm text-gray-600">
+                  {form.featured ? "Yes" : "No"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Inventory */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5">
+            <h2 className="text-lg font-semibold">Inventory</h2>
+
+            <div>
+              <Label>Price</Label>
+
+              <Input
+                placeholder="120"
+                type="number"
+                min={0}
+                value={form.price}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    price: e.target.value,
+                  })
+                }
+                className="mt-2 h-11"
+                required
+              />
+            </div>
+
+            <div>
+              <Label>Stock</Label>
+
+              <Input
+                placeholder="50"
+                type="number"
+                min={0}
+                value={form.stock}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    stock: e.target.value,
+                  })
+                }
+                className="mt-2 h-11"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Category + Color */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5">
+            <h2 className="text-lg font-semibold">Product Options</h2>
+
+            <div>
+              <Label>Category</Label>
+
+              <Select
+                value={form.category_id}
+                onValueChange={(value) =>
+                  setForm({
+                    ...form,
+                    category_id: value,
+                  })
+                }
+              >
+                <SelectTrigger className="w-full mt-2 h-11">
+                  <SelectValue>
+                    {category.find((c) => String(c.id) === form.category_id)
+                      ?.name || "Select a Category"}
+                  </SelectValue>
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Category</SelectLabel>
+
+                    {category.map((c) => (
+                      <SelectItem key={c.id} value={String(c.id)}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Color</Label>
+
+              <Input
+                type="color"
+                className="mt-2 h-12 w-20 p-1 cursor-pointer"
+                value={form.color}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    color: e.target.value,
+                  })
+                }
+              />
+            </div>
           </div>
         </div>
       </div>

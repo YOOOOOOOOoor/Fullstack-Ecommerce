@@ -9,7 +9,8 @@ const CheckoutPage = () => {
   const [user, setUser] = useState({
     name: "",
     address: "",
-    phone: "",
+    email: "",
+    number: "",
   });
 
   // const navigate = useNavigate();
@@ -50,103 +51,311 @@ const CheckoutPage = () => {
   }, []);
 
   return (
-    <div className="flex justify-around">
-      <div className="flex flex-col">
-        <div>
-          <p>Checkout</p>
-        </div>
-        <div>
-          <form className="flex flex-col">
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="Name"
-              value={user.name}
-              onChange={(e) => setUser({ ...user, name: e.target.value })}
-            />
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="Address"
-              value={user.address}
-              onChange={(e) => setUser({ ...user, address: e.target.value })}
-            />
-            <input
-              type="email"
-              name=""
-              id=""
-              value={user.email}
-              onChange={(e) => setUser({ ...user, email: e.target.value })}
-            />
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="Phone NUmber"
-              value={user.number}
-              onChange={(e) => setUser({ ...user, number: e.target.value })}
-            />
-          </form>
-        </div>
-        <div>
-          <p>Payment Method</p>
-          <div className="flex gap-4">
-            <button className="border border-indigo-600 bg-indigo-600 text-white px-4 py-2 rounded font-medium cursor-pointer">
-              Chapa
-            </button>
-            <button
-              disabled
-              className="border border-gray-300 text-gray-400 px-4 py-2 rounded font-medium cursor-not-allowed opacity-50 bg-gray-50"
+    <div className="min-h-screen bg-gray-50 px-6 py-10">
+      <div
+        className="
+      max-w-7xl
+      mx-auto
+      grid
+      lg:grid-cols-3
+      gap-8
+    "
+      >
+        {/* Checkout Form */}
+
+        <div
+          className="
+        lg:col-span-2
+        bg-white
+        border
+        rounded-2xl
+        shadow-sm
+        p-8
+      "
+        >
+          <h1
+            className="
+          text-3xl
+          font-bold
+          mb-8
+        "
+          >
+            Checkout
+          </h1>
+
+          {/* Customer Info */}
+
+          <div className="space-y-5">
+            <div>
+              <label className="text-sm font-medium">Full Name</label>
+
+              <input
+                type="text"
+                placeholder="Your name"
+                value={user.name}
+                className="
+                mt-2
+                w-full
+                border
+                rounded-lg
+                px-4
+                py-3
+                outline-none
+                focus:ring-2
+                focus:ring-indigo-500
+              "
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Address</label>
+
+              <input
+                type="text"
+                placeholder="Delivery address"
+                value={user.address}
+                onChange={(e) =>
+                  setUser({
+                    ...user,
+                    address: e.target.value,
+                  })
+                }
+                className="
+                mt-2
+                w-full
+                border
+                rounded-lg
+                px-4
+                py-3
+                outline-none
+                focus:ring-2
+                focus:ring-indigo-500
+              "
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Email</label>
+
+              <input
+                type="email"
+                placeholder="Email address"
+                value={user.email}
+                className="
+                mt-2
+                w-full
+                border
+                rounded-lg
+                px-4
+                py-3
+                outline-none
+                focus:ring-2
+                focus:ring-indigo-500
+              "
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Phone Number</label>
+
+              <input
+                type="text"
+                placeholder="Phone number"
+                value={user.number}
+                onChange={(e) =>
+                  setUser({
+                    ...user,
+                    number: e.target.value,
+                  })
+                }
+                className="
+                mt-2
+                w-full
+                border
+                rounded-lg
+                px-4
+                py-3
+                outline-none
+                focus:ring-2
+                focus:ring-indigo-500
+              "
+              />
+            </div>
+          </div>
+
+          {/* Payment */}
+
+          <div className="mt-8">
+            <h2
+              className="
+            text-xl
+            font-semibold
+            mb-4
+          "
             >
-              Pay on delivery
-            </button>
+              Payment Method
+            </h2>
+
+            <div className="flex gap-4">
+              <button
+                className="
+                border
+                border-indigo-600
+                bg-indigo-600
+                text-white
+                px-6
+                py-3
+                rounded-lg
+                font-medium
+              "
+              >
+                Chapa
+              </button>
+
+              <button
+                disabled
+                className="
+                border
+                text-gray-400
+                px-6
+                py-3
+                rounded-lg
+                cursor-not-allowed
+                opacity-50
+              "
+              >
+                Pay on delivery
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div>
-        <p>Order summary</p>
-        <div className="flex flex-col gap-5">
-          {cartAmount.map((c) => (
-            <div
-              key={c.id}
-              className="flex gap-3 border border-indigo-600 rounded px-4 py-2"
-            >
-              <div>
-                <img src={c.image_url} alt="" className=" w-8 h-8 rounded" />
-              </div>
-              <div>
-                <p>{c.title}</p>
-                <p className="text-[11px] text-gray-500">
-                  Qty: {c.quantity} X ${c.price}
+
+        {/* Summary */}
+
+        <div
+          className="
+        bg-white
+        border
+        rounded-2xl
+        shadow-sm
+        p-6
+        h-fit
+        sticky
+        top-24
+      "
+        >
+          <h2
+            className="
+          text-2xl
+          font-bold
+          mb-6
+        "
+          >
+            Order Summary
+          </h2>
+
+          <div
+            className="
+          space-y-4
+          max-h-[400px]
+          overflow-y-auto
+        "
+          >
+            {cartAmount.map((c) => (
+              <div
+                key={c.id}
+                className="
+              flex
+              gap-4
+              border-b
+              pb-4
+            "
+              >
+                <img
+                  src={c.image_url}
+                  alt={c.title}
+                  className="
+                w-16
+                h-16
+                rounded-lg
+                object-cover
+              "
+                />
+
+                <div className="flex-1">
+                  <p className="font-semibold">{c.title}</p>
+
+                  <p
+                    className="
+                text-sm
+                text-gray-500
+              "
+                  >
+                    {c.quantity} × ${c.price}
+                  </p>
+                </div>
+
+                <p className="font-semibold">
+                  ${(c.quantity * Number(c.price)).toFixed(2)}
                 </p>
               </div>
-              <div>${c.quantity * c.price}</div>
+            ))}
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+
+              <span>${totalAmount}</span>
             </div>
-          ))}
-        </div>
-        <div>
-          <div className="flex justify-between">
-            <p>Subtotal</p>
-            <p>{totalAmount}</p>
+
+            <div className="flex justify-between">
+              <span>Shipping</span>
+
+              <span
+                className="
+              text-green-600
+              font-semibold
+            "
+              >
+                FREE
+              </span>
+            </div>
+
+            <hr />
+
+            <div
+              className="
+            flex
+            justify-between
+            text-xl
+            font-bold
+          "
+            >
+              <span>Total</span>
+
+              <span>${totalAmount}</span>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <p>Shipping</p>
-            <p className="text-green-800 font-semibold">FREE</p>
-          </div>
+
+          <button
+            disabled={loading}
+            onClick={handlePayment}
+            className="
+            w-full
+            mt-6
+            bg-indigo-600
+            hover:bg-indigo-700
+            text-white
+            py-3
+            rounded-lg
+            font-semibold
+            disabled:opacity-50
+          "
+          >
+            {loading ? "Redirecting..." : "Place Order"}
+          </button>
         </div>
-        <div className="flex justify-between">
-          <p>Total</p>
-          <p className="font-bold">{totalAmount}</p>
-        </div>
-        <button
-          disabled={loading}
-          onClick={handlePayment}
-          className="border border-indigo-600 bg-cyan-600 text-white px-4 py-2 rounded font-medium"
-        >
-          {loading ? "Redirecting..." : "Place order"}
-        </button>
       </div>
     </div>
   );

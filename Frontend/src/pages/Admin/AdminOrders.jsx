@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import {
   Table,
   TableBody,
@@ -22,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +36,8 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { SearchIcon } from "lucide-react";
+
+import { SearchIcon, Eye } from "lucide-react";
 
 const AdminOrders = () => {
   const [form, setForm] = useState({
@@ -42,7 +45,6 @@ const AdminOrders = () => {
     order_status: "",
     payment_status: "",
   });
-  console.log("Form", form);
 
   const statusVal = [
     "awaiting_payment",
@@ -50,9 +52,11 @@ const AdminOrders = () => {
     "delivered",
     "cancelled",
   ];
+
   const paymentVal = ["pending", "successful", "failed", "refunded"];
 
   const navigate = useNavigate();
+
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -64,7 +68,7 @@ const AdminOrders = () => {
           params: {
             ...form,
             page,
-            limit: 2,
+            limit: 6,
           },
         });
 
@@ -78,215 +82,344 @@ const AdminOrders = () => {
     fetchOrders();
   }, [page, form]);
 
-  return (
-    <div className="flex flex-col items-center justify-center w-full bg-gray-100 p-5">
-      {/* Top Filters */}
-      <div className="flex w-[90%] gap-5 mb-5">
-        {/* Search */}
-        <div className="w-[50%]">
-          <Field className="w-full">
-            <InputGroup>
-              <InputGroupAddon>
-                <SearchIcon />
-              </InputGroupAddon>
+  const paymentStyle = (status) => {
+    switch (status) {
+      case "successful":
+        return "bg-green-100 text-green-700";
 
-              <InputGroupInput
-                placeholder="Search order, customer, product..."
-                value={form.search}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    search: e.target.value,
-                  })
-                }
-              />
-            </InputGroup>
-          </Field>
+      case "failed":
+        return "bg-red-100 text-red-700";
+
+      case "refunded":
+        return "bg-yellow-100 text-yellow-700";
+
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const orderStyle = (status) => {
+    switch (status) {
+      case "delivered":
+        return "bg-green-100 text-green-700";
+
+      case "processing":
+        return "bg-blue-100 text-blue-700";
+
+      case "cancelled":
+        return "bg-red-100 text-red-700";
+
+      default:
+        return "bg-orange-100 text-orange-700";
+    }
+  };
+
+  return (
+    <div
+      className="
+      min-h-screen
+      w-full
+      bg-gray-100
+      p-8
+    "
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Orders Management</h1>
+
+          <p className="text-gray-500 mt-1">
+            Manage customer orders, payments and delivery status.
+          </p>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-4">
-          {/* Order Status */}
-          <Select
-            value={form.order_status}
-            onValueChange={(value) =>
-              setForm({
-                ...form,
-                order_status: value,
-              })
-            }
+
+        <div
+          className="
+          bg-white
+          rounded-xl
+          border
+          shadow-sm
+          p-5
+          mb-6
+        "
+        >
+          <div
+            className="
+            flex
+            flex-col
+            lg:flex-row
+            gap-4
+          "
           >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Order Status" />
-            </SelectTrigger>
+            {/* Search */}
 
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
+            <div className="flex-1">
+              <Field>
+                <InputGroup>
+                  <InputGroupAddon>
+                    <SearchIcon size={18} />
+                  </InputGroupAddon>
 
-              {statusVal.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
+                  <InputGroupInput
+                    placeholder="
+                    Search order, customer, product...
+                    "
+                    value={form.search}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        search: e.target.value,
+                      })
+                    }
+                  />
+                </InputGroup>
+              </Field>
+            </div>
+
+            {/* Order Status */}
+
+            <Select
+              value={form.order_status}
+              onValueChange={(value) =>
+                setForm({
+                  ...form,
+                  order_status: value,
+                })
+              }
+            >
+              <SelectTrigger className="w-full lg:w-48">
+                <SelectValue placeholder="Order Status" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Orders</SelectItem>
+
+                {statusVal.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status.replace("_", " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Payment Status */}
+
+            <Select
+              value={form.payment_status}
+              onValueChange={(value) =>
+                setForm({
+                  ...form,
+                  payment_status: value,
+                })
+              }
+            >
+              <SelectTrigger className="w-full lg:w-48">
+                <SelectValue placeholder="Payment Status" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Payments</SelectItem>
+
+                {paymentVal.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Table */}
+
+        <div
+          className="
+          bg-white
+          rounded-xl
+          border
+          shadow-sm
+          overflow-hidden
+        "
+        >
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead>Customer</TableHead>
+
+                <TableHead>Product</TableHead>
+
+                <TableHead>Total</TableHead>
+
+                <TableHead>Payment</TableHead>
+
+                <TableHead>Status</TableHead>
+
+                <TableHead>Date</TableHead>
+
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {orders.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="
+                      text-center
+                      py-10
+                      text-gray-500
+                    "
+                  >
+                    No orders found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                orders.map((order) => (
+                  <TableRow key={order.id} className="hover:bg-gray-50">
+                    <TableCell>
+                      <div>
+                        <p className="font-semibold">{order.name}</p>
+
+                        <p className="text-sm text-gray-500">{order.email}</p>
+                      </div>
+                    </TableCell>
+
+                    <TableCell>
+                      <div
+                        className="
+                        flex
+                        items-center
+                        gap-3
+                      "
+                      >
+                        <img
+                          src={order.image_url}
+                          alt={order.title}
+                          className="
+                            w-12
+                            h-12
+                            rounded-lg
+                            object-cover
+                          "
+                        />
+
+                        <div>
+                          <p className="font-medium">{order.display_title}</p>
+
+                          <p className="text-xs text-gray-500">
+                            {order.item_count} item(s)
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="font-semibold">
+                      ${order.total_price}
+                    </TableCell>
+
+                    <TableCell>
+                      <span
+                        className={`
+                        px-3
+                        py-1
+                        rounded-full
+                        text-xs
+                        font-medium
+                        ${paymentStyle(order.payment_status)}
+                      `}
+                      >
+                        {order.payment_status}
+                      </span>
+                    </TableCell>
+
+                    <TableCell>
+                      <span
+                        className={`
+                        px-3
+                        py-1
+                        rounded-full
+                        text-xs
+                        font-medium
+                        ${orderStyle(order.order_status)}
+                      `}
+                      >
+                        {order.order_status.replace("_", " ")}
+                      </span>
+                    </TableCell>
+
+                    <TableCell>
+                      {new Date(order.created_at).toLocaleDateString("en-GB")}
+                    </TableCell>
+
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        className="
+                          gap-2
+                        "
+                        onClick={() => navigate(`/admin/orders/${order.id}`)}
+                      >
+                        <Eye size={16} />
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Pagination */}
+
+        <div className="mt-6 flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    if (page > 1) setPage(page - 1);
+                  }}
+                />
+              </PaginationItem>
+
+              {[...Array(totalPages)].map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === index + 1}
+                    onClick={(e) => {
+                      e.preventDefault();
+
+                      setPage(index + 1);
+                    }}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
               ))}
-            </SelectContent>
-          </Select>
 
-          {/* Payment Status */}
-          <Select
-            value={form.payment_status}
-            onValueChange={(value) =>
-              setForm({
-                ...form,
-                payment_status: value,
-              })
-            }
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Payment Status" />
-            </SelectTrigger>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
 
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-
-              {paymentVal.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                    if (page < totalPages) setPage(page + 1);
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
-
-      {/* Orders Table */}
-      <div className="w-[90%] rounded-md border bg-white overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Customer</TableHead>
-
-              <TableHead>Product</TableHead>
-
-              <TableHead>Total</TableHead>
-
-              <TableHead>Payment</TableHead>
-
-              <TableHead>Status</TableHead>
-
-              <TableHead>Date</TableHead>
-
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id}>
-                {/* Customer */}
-                <TableCell>
-                  <div>
-                    <p className="font-medium">{order.name}</p>
-
-                    <p className="text-sm text-gray-500">{order.email}</p>
-                  </div>
-                </TableCell>
-
-                {/* Product */}
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={order.image_url}
-                      alt={order.title}
-                      className="w-12 h-10 rounded object-cover"
-                    />
-
-                    <div>
-                      <p>{order.display_title}</p>
-
-                      <p className="text-xs text-gray-500">
-                        {order.item_count} item(s)
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-
-                {/* Total */}
-                <TableCell>${order.total_price}</TableCell>
-
-                {/* Payment */}
-                <TableCell>
-                  <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-700">
-                    {order.payment_status}
-                  </span>
-                </TableCell>
-
-                {/* Order Status */}
-                <TableCell>
-                  <span className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-700">
-                    {order.order_status}
-                  </span>
-                </TableCell>
-
-                {/* Date */}
-                <TableCell>
-                  {new Date(order.created_at).toLocaleDateString("en-GB")}
-                </TableCell>
-
-                {/* Action */}
-                <TableCell>
-                  <Button onClick={() => navigate(`/admin/orders/${order.id}`)}>
-                    View
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination */}
-
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-
-                if (page > 1) setPage(page - 1);
-              }}
-            />
-          </PaginationItem>
-
-          {[...Array(totalPages)].map((_, index) => (
-            <PaginationItem key={index}>
-              <PaginationLink
-                href="#"
-                isActive={page === index + 1}
-                onClick={(e) => {
-                  e.preventDefault();
-
-                  setPage(index + 1);
-                }}
-              >
-                {index + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-
-                if (page < totalPages) setPage(page + 1);
-              }}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
     </div>
   );
 };

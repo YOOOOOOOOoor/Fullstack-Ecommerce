@@ -21,6 +21,7 @@ import CheckoutPage from "./pages/customer/CheckoutPage";
 import Order from "./pages/customer/Orders";
 import OrderDetails from "./pages/customer/OrderDetails";
 import CustomerRoute from "./pages/customer/CustomerRoute";
+import Wishlist from "./pages/customer/Wishlist";
 
 // admin
 import Dashboard from "./pages/Admin/Dashboard.jsx";
@@ -107,6 +108,15 @@ function App() {
             element={
               <CustomerRoute user={user}>
                 <OrderDetails user={user} setUser={setUser} />
+              </CustomerRoute>
+            }
+          />
+
+          <Route
+            path="/wishlist"
+            element={
+              <CustomerRoute user={user}>
+                <Wishlist user={user} setUser={setUser} />
               </CustomerRoute>
             }
           />

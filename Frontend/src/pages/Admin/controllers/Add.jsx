@@ -39,7 +39,7 @@ const Add = ({ onSuccess }) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">
+          <Button className="bg-blue-500 text-white hover:bg-green-600 cursor-pointer">
             Add Category
           </Button>
         }

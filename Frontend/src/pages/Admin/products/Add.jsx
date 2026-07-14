@@ -37,6 +37,7 @@ const Add = () => {
     image: "",
     category_id: "",
     status: "draft",
+    featured: false,
   });
 
   useEffect(() => {
@@ -68,6 +69,7 @@ const Add = () => {
       data.append("status", form.status);
       data.append("category_id", form.category_id);
       data.append("image", form.image);
+      data.append("featured", form.featured);
 
       const res = await API.post("/products", data);
 
@@ -95,152 +97,257 @@ const Add = () => {
   };
 
   return (
-    <div className="w-[100%] flex justify-around ">
-      <div className="">
-        <div>
-          <h1 className="text-2xl font-bold"> New product</h1>
-          <p>
-            Add a product to your catalogue. You can save as draft or publish
-            immediately.
-          </p>
-        </div>
-        <div>
-          <form>
+    <div className="min-h-screen bg-gray-50 px-6 py-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Section */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">New Product</h1>
+
+            <p className="text-gray-500 mt-2">
+              Add a product to your catalogue. You can save as draft or publish
+              immediately.
+            </p>
+          </div>
+
+          {/* Product Details */}
+          <div className="bg-white rounded-xl border shadow-sm p-6">
             <FieldGroup>
               <FieldSet>
-                <FieldLegend>Details</FieldLegend>
-                <FieldGroup>
+                <FieldLegend className="text-xl font-semibold mb-5">
+                  Product Details
+                </FieldLegend>
+
+                <FieldGroup className="space-y-6">
                   <Field>
-                    <FieldLabel htmlFor="checkout-7j9-card-name-43j">
-                      Title
-                    </FieldLabel>
+                    <FieldLabel>Product Title</FieldLabel>
+
                     <Input
-                      id="checkout-7j9-card-name-43j"
                       placeholder="Premium wireless mouse"
                       value={form.title}
                       onChange={(e) =>
-                        setForm({ ...form, title: e.target.value })
+                        setForm({
+                          ...form,
+                          title: e.target.value,
+                        })
                       }
+                      className="h-11"
                       required
                     />
                   </Field>
+
                   <Field>
-                    <FieldLabel htmlFor="checkout-7j9-optional-comments">
-                      Description
-                    </FieldLabel>
+                    <FieldLabel>Description</FieldLabel>
+
                     <Textarea
-                      id="textarea-message"
                       placeholder="Tell your customers what they can expect from this product."
                       value={form.description}
                       onChange={(e) =>
-                        setForm({ ...form, description: e.target.value })
+                        setForm({
+                          ...form,
+                          description: e.target.value,
+                        })
                       }
+                      className="min-h-32 resize-none"
                       required
                     />
                   </Field>
                 </FieldGroup>
               </FieldSet>
             </FieldGroup>
-          </form>
+          </div>
+
+          {/* Image Upload */}
+          <div className="bg-white rounded-xl border shadow-sm p-6">
+            <Field>
+              <FieldLabel>Product Image</FieldLabel>
+
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleChange}
+                className="cursor-pointer"
+              />
+
+              <FieldDescription>
+                Upload a clear image of your product.
+              </FieldDescription>
+            </Field>
+
+            {preview && (
+              <div className="mt-5">
+                <img
+                  src={preview}
+                  alt=""
+                  className="h-48 w-48 rounded-xl object-cover border"
+                />
+              </div>
+            )}
+          </div>
         </div>
-        <div>
-          <Field>
-            <FieldLabel htmlFor="picture">Picture</FieldLabel>
-            <Input
-              id="picture"
-              type="file"
-              accept="image/*"
-              onChange={handleChange}
-            />
-            <FieldDescription>Select a picture to upload.</FieldDescription>
-          </Field>
-          {preview && (
+
+        {/* Right Section */}
+        <div className="space-y-6">
+          {/* Publish Card */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5">
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={addProduct}
+                className="flex-1 h-11 text-base"
+              >
+                Save Product
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => navigate("/admin/products")}
+                className="flex-1 h-11 text-base"
+              >
+                Go Back
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="publish">Product Status</Label>
+
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="publish"
+                  checked={form.status === "published"}
+                  onCheckedChange={(checked) =>
+                    setForm({
+                      ...form,
+                      status: checked ? "published" : "draft",
+                    })
+                  }
+                />
+
+                <span className="text-sm text-gray-600">
+                  {form.status === "published" ? "Published" : "Draft"}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="featured">Featured?</Label>
+
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="featured"
+                  checked={form.featured}
+                  onCheckedChange={(checked) =>
+                    setForm({
+                      ...form,
+                      featured: checked,
+                    })
+                  }
+                />
+
+                <span className="text-sm text-gray-600">
+                  {form.featured ? "Yes" : "No"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Inventory Card */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5">
+            <h2 className="font-semibold text-lg">Inventory</h2>
+
             <div>
-              <img
-                src={preview}
-                alt=""
-                className="h-40 w-40 rounded-md object-cover"
+              <Label>Price</Label>
+
+              <Input
+                placeholder="120"
+                type="number"
+                min={0}
+                value={form.price}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    price: e.target.value,
+                  })
+                }
+                className="mt-2 h-11"
+                required
               />
             </div>
-          )}
-        </div>
-      </div>
-      <div className="  w-[30%]">
-        <div>
-          <Button className="" onClick={addProduct}>
-            Save{" "}
-          </Button>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="publish"
-            checked={form.status === "published"}
-            onCheckedChange={(checked) =>
-              setForm({
-                ...form,
-                status: checked ? "published" : "draft",
-              })
-            }
-          />
-          <Label htmlFor="publish">
-            {form.status === "published" ? "Published" : "Draft"}
-          </Label>
-        </div>
-        <div>
-          <Label htmlFor="input-price">Price</Label>
-          <Input
-            placeholder="120"
-            type={"number"}
-            min={0}
-            id={"input-price"}
-            required
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
-          />
-          <Label htmlFor="input-stock">Stock</Label>
-          <Input
-            placeholder="50"
-            type={"number"}
-            min={0}
-            id={"input-stock"}
-            required
-            value={form.stock}
-            onChange={(e) => setForm({ ...form, stock: e.target.value })}
-          />
-        </div>
-        <div>
-          <Select
-            value={form.category_id}
-            onValueChange={(value) => setForm({ ...form, category_id: value })}
-          >
-            <SelectTrigger className="w-full max-w-48">
-              <SelectValue>
-                {category.find((c) => String(c.id) === form.category_id)
-                  ?.name || "Select a Category"}
-              </SelectValue>
-              {/* <SelectValue placeholder="Select a Category" /> */}
-            </SelectTrigger>
 
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Category</SelectLabel>
+            <div>
+              <Label>Stock</Label>
 
-                {category.map((c) => (
-                  <SelectItem key={c.id} value={String(c.id)}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <div>
-            <Input
-              type="color"
-              defaultValue="#3b82f6"
-              className="h-10 w-16 p-1 cursor-pointer"
-              value={form.color}
-              onChange={(e) => setForm({ ...form, color: e.target.value })}
-            />
+              <Input
+                placeholder="50"
+                type="number"
+                min={0}
+                value={form.stock}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    stock: e.target.value,
+                  })
+                }
+                className="mt-2 h-11"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Category & Color */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5">
+            <h2 className="font-semibold text-lg">Product Options</h2>
+
+            <div>
+              <Label>Category</Label>
+
+              <Select
+                value={form.category_id}
+                onValueChange={(value) =>
+                  setForm({
+                    ...form,
+                    category_id: value,
+                  })
+                }
+              >
+                <SelectTrigger className="w-full mt-2 h-11">
+                  <SelectValue>
+                    {category.find((c) => String(c.id) === form.category_id)
+                      ?.name || "Select a Category"}
+                  </SelectValue>
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Category</SelectLabel>
+
+                    {category.map((c) => (
+                      <SelectItem key={c.id} value={String(c.id)}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Color</Label>
+
+              <div className="mt-2">
+                <Input
+                  type="color"
+                  value={form.color}
+                  className="h-12 w-20 p-1 cursor-pointer"
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      color: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

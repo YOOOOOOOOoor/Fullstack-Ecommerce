@@ -318,19 +318,30 @@ RETURNING id
 
         // Move cart items into order_items
         for (const item of cartItems.rows) {
+          // 1. Save order item
           await pool.query(
             `
-      INSERT INTO order_items
-      (
-        order_id,
-        product_id,
-        quantity,
-        price_at_purchase
-      )
-      VALUES
-      ($1,$2,$3,$4)
-      `,
+    INSERT INTO order_items
+    (
+      order_id,
+      product_id,
+      quantity,
+      price_at_purchase
+    )
+    VALUES
+    ($1,$2,$3,$4)
+    `,
             [order.rows[0].id, item.product_id, item.quantity, item.price],
+          );
+
+          // 2. Decrease product stock
+          await pool.query(
+            `
+    UPDATE products
+    SET stock = stock - $1
+    WHERE id = $2
+    `,
+            [item.quantity, item.product_id],
           );
         }
 

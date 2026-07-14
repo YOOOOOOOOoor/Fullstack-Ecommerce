@@ -24,7 +24,7 @@ const Delete = ({ onSuccess, id }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" className="cursor-pointer">
+        <Button className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -37,8 +37,11 @@ const Delete = ({ onSuccess, id }) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => deleteProduct(id)}>
-            Continue
+          <AlertDialogAction
+            onClick={() => deleteProduct(id)}
+            className="bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+          >
+            DELETE
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

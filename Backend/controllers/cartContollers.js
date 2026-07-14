@@ -93,9 +93,7 @@ export const showCart = async (req, res) => {
       [cart_id],
     );
     if (cartItems.rows.length === 0) {
-      return res.status(404).json({
-        message: "Cart is empty",
-      });
+      return res.status(200).json([]);
     }
 
     res.status(200).json(cartItems.rows);

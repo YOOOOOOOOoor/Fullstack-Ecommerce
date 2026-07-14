@@ -97,6 +97,7 @@ export const me = async (req, res) => {
   res.status(200).json({
     msg: "User logged in successfully",
     user: {
+      id: req.user.id,
       name: req.user.name,
       email: req.user.email,
       phone: req.user.phone,

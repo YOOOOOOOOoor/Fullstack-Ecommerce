@@ -145,253 +145,349 @@ const Products = () => {
     console.log(products);
   }, [products]);
 
+  //
   return (
-    <div className=" flex flex-col items-center justify-center w-[100%] bg-gray-100">
-      <div>
-        <Button onClick={() => navigate("/admin/products/add")}>
-          Add Products
-        </Button>
-      </div>
-      <div className=" flex w-298">
-        <div className="w-[50%]">
-          <Field className="w-[100%]">
-            <InputGroup>
-              <InputGroupAddon>
-                <SearchIcon />
-              </InputGroupAddon>
-              <InputGroupInput
-                placeholder="Search..."
-                onChange={(e) => setForm({ ...form, search: e.target.value })}
-              />
-            </InputGroup>
-          </Field>
+    <div className="min-h-screen bg-gray-100 p-8">
+      {/* Header */}
+      <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Products Management
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Manage your store products, stock and visibility
+          </p>
         </div>
 
-        <div className="w-[50%] flex  justify-around">
-          <div className="w-[20%]">
-            <label htmlFor="">{form.price}</label>
+        <Button
+          onClick={() => navigate("/admin/products/add")}
+          className="bg-indigo-600 hover:bg-indigo-700 px-6 py-5 rounded-lg"
+        >
+          + Add Product
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="w-full max-w-[1400px] mx-auto bg-white rounded-xl shadow-sm border p-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 items-center">
+          {/* Search */}
+          <div className="lg:col-span-2">
+            <Field>
+              <InputGroup className="h-12">
+                <InputGroupAddon>
+                  <SearchIcon className="text-gray-400" />
+                </InputGroupAddon>
+
+                <InputGroupInput
+                  placeholder="Search products..."
+                  className="text-base"
+                  onChange={(e) => setForm({ ...form, search: e.target.value })}
+                />
+              </InputGroup>
+            </Field>
+          </div>
+
+          {/* Price */}
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="flex justify-between mb-2">
+              <label className="text-sm font-medium">Maximum Price</label>
+
+              <span className="text-indigo-600 font-semibold">
+                ${form.price}
+              </span>
+            </div>
+
             <Slider
               value={form.price}
               max={5000}
               step={10}
-              className="w-85 bg-red-900"
               onValueChange={(value) => setForm({ ...form, price: value })}
             />
           </div>
-          <div>
-            <Select
-              value={form.category}
-              onValueChange={(value) => setForm({ ...form, category: value })}
-            >
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue>
-                  {form.category === "all"
-                    ? "All"
-                    : category.find((c) => String(c.id) === form.category)
-                        ?.name || "Select a Category"}
-                </SelectValue>
-                {/* <SelectValue placeholder="Select a Category" /> */}
-              </SelectTrigger>
 
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Category</SelectLabel>
-                  <SelectItem key={"all"} value={"all"}>
-                    All
+          {/* Category */}
+          <Select
+            value={form.category}
+            onValueChange={(value) => setForm({ ...form, category: value })}
+          >
+            <SelectTrigger className="h-12">
+              <SelectValue>
+                {form.category === "all"
+                  ? "All Categories"
+                  : category.find((c) => String(c.id) === form.category)
+                      ?.name || "Select Category"}
+              </SelectValue>
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Category</SelectLabel>
+
+                <SelectItem value="all">All Categories</SelectItem>
+
+                {category.map((c) => (
+                  <SelectItem key={c.id} value={String(c.id)}>
+                    {c.name}
                   </SelectItem>
-                  {category.map((c) => (
-                    <SelectItem
-                      key={c.id}
-                      value={String(c.id)}
-                      className={"w-[100%]"}
-                    >
-                      {c.name || String(c.id)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Select
-              value={form.color}
-              onValueChange={(value) => setForm({ ...form, color: value })}
-            >
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue>
-                  {form.color === "all" ? (
-                    "All"
-                  ) : form.color ? (
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Extra Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+          {/* Color */}
+          <Select
+            value={form.color}
+            onValueChange={(value) => setForm({ ...form, color: value })}
+          >
+            <SelectTrigger className="h-12">
+              <SelectValue>
+                {form.color === "all" ? (
+                  "All Colors"
+                ) : form.color ? (
+                  <div className="flex items-center gap-2">
                     <div
                       className="w-5 h-5 rounded-full border"
                       style={{
-                        backgroundColor: color.find(
-                          (c) => c.color === form.color,
-                        )?.color,
+                        backgroundColor: form.color,
                       }}
                     />
-                  ) : (
-                    "Select a Color"
-                  )}
-                </SelectValue>
-                {/* <SelectValue placeholder="Select a Category" /> */}
-              </SelectTrigger>
 
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Color</SelectLabel>
-                  <SelectItem value={"all"}>All</SelectItem>
-                  {color.map((c) => (
-                    <SelectItem key={c.id} value={String(c.color)}>
+                    <span>{form.color}</span>
+                  </div>
+                ) : (
+                  "Select Color"
+                )}
+              </SelectValue>
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Color</SelectLabel>
+
+                <SelectItem value="all">All Colors</SelectItem>
+
+                {color.map((c) => (
+                  <SelectItem key={c.id} value={String(c.color)}>
+                    <div className="flex items-center gap-3">
                       <div
-                        className="w-5 h-5 rounded-full"
-                        style={{ backgroundColor: c.color }}
-                      ></div>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Select
-              value={form.status}
-              onValueChange={(value) => setForm({ ...form, status: value })}
-            >
-              <SelectTrigger className="w-full max-w-48">
-                <SelectValue>
-                  {form.status === "all"
-                    ? "All"
-                    : status.find((c) => c === form.status)?.toUpperCase() ||
-                      "Select a Category"}
-                </SelectValue>
-                {/* <SelectValue placeholder="Select a Category" /> */}
-              </SelectTrigger>
+                        className="w-5 h-5 rounded-full border"
+                        style={{
+                          backgroundColor: c.color,
+                        }}
+                      />
 
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Status</SelectLabel>
+                      {c.color}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-                  {status.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c.toUpperCase()}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Status */}
+          <Select
+            value={form.status}
+            onValueChange={(value) => setForm({ ...form, status: value })}
+          >
+            <SelectTrigger className="h-12">
+              <SelectValue>
+                {form.status === "all"
+                  ? "All Status"
+                  : form.status.toUpperCase()}
+              </SelectValue>
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Status</SelectLabel>
+
+                {status.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s.toUpperCase()}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
-      <div className=" w-[70%]">
-        <div className="overflow-hidden rounded-md border">
-          <Table>
+      {/* Products Table */}
+      <div className="w-full max-w-[1400px] mx-auto bg-white rounded-xl border shadow-sm overflow-hidden">
+        <div className="px-6 py-5 border-b">
+          <h2 className="text-xl font-semibold">All Products</h2>
+
+          <p className="text-sm text-gray-500">
+            View and manage your available products
+          </p>
+        </div>
+
+        <div className="overflow-x-auto p-4">
+          <Table className=" ">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px]">Product</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Color</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead>Status </TableHead>
-                <TableHead>Created </TableHead>
-                <TableHead className="text-right"></TableHead>
+                <TableHead className="font-semibold">Product</TableHead>
+
+                <TableHead className="font-semibold">Category</TableHead>
+
+                <TableHead className="font-semibold">Color</TableHead>
+
+                <TableHead className="font-semibold">Price</TableHead>
+
+                <TableHead className="font-semibold">Stock</TableHead>
+
+                <TableHead className="font-semibold">Status</TableHead>
+
+                <TableHead className="font-semibold">Created</TableHead>
+
+                <TableHead className="text-right font-semibold">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {products.map((c) => (
-                <TableRow key={c.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
+                <TableRow key={c.id} className="hover:bg-gray-50 transition">
+                  {/* Product */}
+                  <TableCell>
+                    <div className="flex items-center gap-4">
                       <img
                         src={c.image_url}
                         alt={c.title}
-                        className="w-15 h-10 rounded-md object-cover"
+                        className="w-14 h-14 rounded-lg object-cover border"
                       />
-                      <p>{c.title}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{c.category_name}</TableCell>
-                  <TableCell>
-                    <div
-                      className="w-5 h-5 rounded-full"
-                      style={{ backgroundColor: c.color }}
-                    ></div>
-                  </TableCell>
-                  <TableCell>${c.price}</TableCell>
-                  <TableCell
-                    className={"flex gap-3 items-center justify-center h-20 "}
-                  >
-                    <p> {c.stock} </p>
 
-                    <div>
-                      {c.stock > 20 && (
-                        <div
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: "green" }}
-                        ></div>
-                      )}
-                      {c.stock <= 20 && c.stock > 10 && (
-                        <div
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: "orange" }}
-                        ></div>
-                      )}
-                      {c.stock <= 10 && (
-                        <div
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: "red" }}
-                        ></div>
-                      )}
+                      <div>
+                        <p className="font-semibold text-gray-900">{c.title}</p>
+
+                        <p className="text-sm text-gray-500 max-w-[200px] truncate">
+                          {c.description}
+                        </p>
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell className={""}>
-                    <div>
-                      {
-                        <div
-                          className=" rounded-full px-3 w-fit"
-                          style={{
-                            backgroundColor:
-                              c.status === "published" ? "#D0FAE5" : "red",
-                            color:
-                              c.status === "published" ? "#007A55" : "white",
-                          }}
-                        >
-                          <p>{c.status}</p>
-                        </div>
-                      }
-                    </div>
-                  </TableCell>
+
+                  {/* Category */}
                   <TableCell>
-                    {c.created_at
-                      ? new Date(c.created_at).toLocaleDateString("en-GB")
-                      : "-"}
+                    <span className="px-3 py-1 rounded-full bg-gray-100 text-sm">
+                      {c.category_name}
+                    </span>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Button onClick={() => navigate(`/admin/products/${c.id}`)}>
-                      Edit
-                    </Button>
-                    <div>
+
+                  {/* Color */}
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-7 h-7 rounded-full border shadow-sm"
+                        style={{
+                          backgroundColor: c.color,
+                        }}
+                      />
+                    </div>
+                  </TableCell>
+
+                  {/* Price */}
+                  <TableCell>
+                    <span className="font-semibold text-gray-900">
+                      ${c.price}
+                    </span>
+                  </TableCell>
+
+                  {/* Stock */}
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium">{c.stock}</span>
+
+                      {c.stock > 20 && (
+                        <span className="flex items-center gap-1 text-xs text-green-600">
+                          <span className="w-2 h-2 rounded-full bg-green-500" />
+                          High
+                        </span>
+                      )}
+
+                      {c.stock <= 20 && c.stock > 10 && (
+                        <span className="flex items-center gap-1 text-xs text-orange-600">
+                          <span className="w-2 h-2 rounded-full bg-orange-500" />
+                          Medium
+                        </span>
+                      )}
+
+                      {c.stock <= 10 && (
+                        <span className="flex items-center gap-1 text-xs text-red-600">
+                          <span className="w-2 h-2 rounded-full bg-red-500" />
+                          Low
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  {/* Status */}
+                  <TableCell>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        c.status === "published"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {c.status}
+                    </span>
+                  </TableCell>
+
+                  {/* Date */}
+                  <TableCell>
+                    <span className="text-gray-600">
+                      {c.created_at
+                        ? new Date(c.created_at).toLocaleDateString("en-GB")
+                        : "-"}
+                    </span>
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="sm"
+                        className="bg-indigo-600 hover:bg-indigo-700"
+                        onClick={() => navigate(`/admin/products/${c.id}`)}
+                      >
+                        Edit
+                      </Button>
+
                       <AlertDialog>
                         <AlertDialogTrigger
-                          render={<Button variant="outline">Delete</Button>}
+                          render={
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-red-600 border-red-200 hover:bg-red-50"
+                            >
+                              Delete
+                            </Button>
+                          }
                         />
+
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
+                            <AlertDialogTitle>Delete Product?</AlertDialogTitle>
+
                             <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete your account from our servers.
+                              This action cannot be undone. The product will be
+                              permanently removed.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
+
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
+
                             <AlertDialogAction
+                              className="bg-red-600 hover:bg-red-700"
                               onClick={() => deleteProduct(c.id)}
                             >
-                              Continue
+                              Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -403,44 +499,56 @@ const Products = () => {
             </TableBody>
           </Table>
         </div>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (page > 1) setPage(page - 1);
-                }}
-              />
-            </PaginationItem>
-
-            {[...Array(totalPages)].map((_, index) => (
-              <PaginationItem key={index}>
-                <PaginationLink
+        {/* Pagination */}
+        <div className="flex justify-center py-6 border-t">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
                   href="#"
-                  isActive={page === index + 1}
+                  className="cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
-                    setPage(index + 1);
-                  }}
-                >
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
 
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (page < totalPages) setPage(page + 1);
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+                    if (page > 1) {
+                      setPage(page - 1);
+                    }
+                  }}
+                />
+              </PaginationItem>
+
+              {[...Array(totalPages)].map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === index + 1}
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(index + 1);
+                    }}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    if (page < totalPages) {
+                      setPage(page + 1);
+                    }
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </div>
     </div>
   );
