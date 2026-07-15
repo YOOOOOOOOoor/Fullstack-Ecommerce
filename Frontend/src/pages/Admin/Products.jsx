@@ -59,7 +59,7 @@ const Products = () => {
     search: "",
     color: "",
     status: "all",
-    price: 5000,
+    price: 100000,
   });
   console.log("Form", form);
 
@@ -199,7 +199,7 @@ const Products = () => {
 
             <Slider
               value={form.price}
-              max={5000}
+              max={100000}
               step={10}
               onValueChange={(value) => setForm({ ...form, price: value })}
             />

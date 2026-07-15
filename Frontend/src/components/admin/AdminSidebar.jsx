@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   ArrowLeft,
   Store,
+  Users,
 } from "lucide-react";
 
 import {
@@ -46,6 +47,11 @@ const data = {
           title: "Orders",
           url: "/admin/orders",
           icon: ShoppingCart,
+        },
+        {
+          title: "Analytics",
+          url: "/admin/analytics",
+          icon: Users,
         },
       ],
     },

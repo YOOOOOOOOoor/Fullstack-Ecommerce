@@ -169,9 +169,9 @@ const Dashboard = () => {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 flex flex-col items-center justify-center text-center ">
             <Button
-              className="w-full"
+              className="w-50 h-8 text-xs flex items-center justify-center "
               onClick={() => navigate("/admin/products/add")}
             >
               + Add Product
@@ -179,7 +179,7 @@ const Dashboard = () => {
 
             <Button
               variant="outline"
-              className="w-full"
+              className="w-50 h-8 text-xs flex items-center justify-center"
               onClick={() => navigate("/admin/categories")}
             >
               + Add Category
@@ -187,7 +187,7 @@ const Dashboard = () => {
 
             <Button
               variant="outline"
-              className="w-full"
+              className="w-50 h-8 text-xs flex items-center justify-center"
               onClick={() => navigate("/admin/orders")}
             >
               View Orders
@@ -257,7 +257,7 @@ const Dashboard = () => {
                 {lowStock.map((product) => (
                   <div
                     key={product.id}
-                    onClick={() => navigate(`/admin/products  /${product.id}`)}
+                    onClick={() => navigate(`/admin/products/${product.id}`)}
                     className="
                     flex
                     items-center

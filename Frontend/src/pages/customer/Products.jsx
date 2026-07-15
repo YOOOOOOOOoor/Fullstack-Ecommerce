@@ -49,7 +49,7 @@ const Products = () => {
     category: "",
     search: "",
     color: "",
-    price: 5000,
+    price: 100000,
   });
 
   // const [cart, setCart] = useEffect({
@@ -185,7 +185,7 @@ const Products = () => {
 
             <Slider
               value={[form.price]}
-              max={5000}
+              max={100000}
               step={10}
               onValueChange={(value) =>
                 setForm({

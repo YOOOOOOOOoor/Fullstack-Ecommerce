@@ -24,6 +24,7 @@ const Wishlist = () => {
   const remove = async (id) => {
     try {
       await API.delete(`/wishlist/${id}`);
+
       fetchOrders();
     } catch (error) {
       console.log(error.response?.data);
@@ -40,6 +41,7 @@ const Wishlist = () => {
     }
   };
   useEffect(() => {
+    console.log(fetchOrders());
     fetchOrders();
   }, []);
 
@@ -90,7 +92,7 @@ const Wishlist = () => {
                 {/* Image */}
 
                 <div
-                  onClick={() => navigate(`/products/${order.id}`)}
+                  onClick={() => navigate(`/products/${order.product_id}`)}
                   className="cursor-pointer"
                 >
                   <img
@@ -184,7 +186,7 @@ const Wishlist = () => {
                       rounded-lg
                       hover:bg-gray-100
                     "
-                      onClick={() => navigate(`/products/${order.id}`)}
+                      onClick={() => navigate(`/products/${order.product_id}`)}
                     >
                       View
                     </button>

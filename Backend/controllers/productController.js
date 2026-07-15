@@ -383,6 +383,7 @@ export const getFeaturedProducts = async (req, res) => {
       ON categories.id = products.category_id
       WHERE products.featured=true
       AND products.status='published'
+      AND products.stock > 0
       ORDER BY products.created_at DESC
       LIMIT 8
       `,

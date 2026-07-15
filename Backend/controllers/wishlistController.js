@@ -67,8 +67,23 @@ export const show = async (req, res) => {
 
 export const remove = async (req, res) => {
   try {
-    const { id } = req.params;
-    await pool.query(`DELETE FROM wishlist_items WHERE id = $1`, [id]);
+    const user_id = req.user.id;
+    const { product_id } = req.params;
+
+    const wishlist = await pool.query(
+      `SELECT id FROM wishlists
+        WHERE user_id = $1`,
+      [user_id],
+    );
+
+    const wishlist_id = wishlist.rows[0].id;
+
+    await pool.query(
+      `DELETE FROM wishlist_items
+        WHERE cart_id = $1 AND product_id = $2`,
+      [wishlist_id, product_id],
+    );
+
     res.json({ message: "Product removed from wishlists" });
   } catch (error) {
     console.error(error);

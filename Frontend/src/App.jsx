@@ -22,6 +22,7 @@ import Order from "./pages/customer/Orders";
 import OrderDetails from "./pages/customer/OrderDetails";
 import CustomerRoute from "./pages/customer/CustomerRoute";
 import Wishlist from "./pages/customer/Wishlist";
+import Settings from "./pages/customer/Settings";
 
 // admin
 import Dashboard from "./pages/Admin/Dashboard.jsx";
@@ -32,6 +33,7 @@ import Orders from "./pages/Admin/AdminOrders";
 import AdminOrderDetail from "./pages/Admin/AdminOrderDetail";
 import Add from "./pages/Admin/products/Add";
 import Edit from "./pages/Admin/products/Edit";
+import Analytics from "./pages/Admin/Analytics";
 
 API.defaults.withCredentials = true;
 
@@ -72,6 +74,15 @@ function App() {
           <Route
             path="/products/:id"
             element={<SinglePage user={user} setUser={setUser} />}
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <CustomerRoute user={user}>
+                <Settings user={user} setUser={setUser} />
+              </CustomerRoute>
+            }
           />
 
           <Route path="/success" element={<Success />} />
@@ -163,6 +174,8 @@ function App() {
           <Route path="orders" element={<Orders />} />
 
           <Route path="orders/:id" element={<AdminOrderDetail />} />
+
+          <Route path="analytics" element={<Analytics />} />
         </Route>
       </Routes>
     </Router>

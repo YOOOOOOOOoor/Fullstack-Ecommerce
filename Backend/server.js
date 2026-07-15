@@ -8,6 +8,8 @@ import wishlist from "./routes/wishlistRoute.js";
 import order from "./routes/orderRoutes.js";
 import reviews from "./routes/reviewRoutes.js";
 import analytics from "./routes/analyticsRoute.js";
+import settings from "./routes/settingsRoute.js";
+import trueanalyticsRoutes from "./routes/Trueanalytics.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
@@ -36,6 +38,9 @@ app.use("/api/orders", order);
 app.use("/api/wishlist", wishlist);
 app.use("/api/reviews", reviews);
 app.use("/api/admin/analytics", analytics);
+app.use("/api/settings", settings);
+
+app.use("/api/trueanalytics", trueanalyticsRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
