@@ -134,43 +134,46 @@ const Customers = () => {
   return (
     <div
       className="
-      p-6
-      space-y-8
-      "
+    p-6
+    space-y-8
+    bg-background
+    "
     >
       {/* HEADER */}
+
       <div
         className="
-        flex
-        flex-col
-        md:flex-row
-        md:justify-between
-        md:items-center
-        gap-4
-        "
+      flex
+      flex-col
+      md:flex-row
+      md:justify-between
+      md:items-center
+      gap-4
+      "
       >
         <div>
           <h1
             className="
-            text-3xl
-            font-bold
-            "
+          text-3xl
+          font-bold
+          text-foreground
+          "
           >
             Customers
           </h1>
 
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Manage customer accounts and permissions
           </p>
         </div>
 
         <div
           className="
-          flex
-          flex-col
-          sm:flex-row
-          gap-3
-          "
+        flex
+        flex-col
+        sm:flex-row
+        gap-3
+        "
         >
           <input
             placeholder="Search customers..."
@@ -182,20 +185,23 @@ const Customers = () => {
               }
             }}
             className="
-            border
-            rounded-lg
-            px-4
-            py-2
-            w-full
-            sm:w-64
-            "
+          border
+          border-border
+          bg-background
+          text-foreground
+          placeholder:text-muted-foreground
+          rounded-lg
+          px-4
+          py-2
+          w-full
+          sm:w-64
+          "
           />
 
           <Select
             value={role}
             onValueChange={(value) => {
               setRole(value);
-
               setPage(1);
             }}
           >
@@ -213,42 +219,45 @@ const Customers = () => {
           </Select>
         </div>
       </div>
+
       {/* CUSTOMER GRID */}
+
       <div
         className="
-        grid
-        grid-cols-1
-        sm:grid-cols-2
-        lg:grid-cols-3
-        xl:grid-cols-4
-        gap-6
-        "
+      grid
+      grid-cols-1
+      sm:grid-cols-2
+      lg:grid-cols-3
+      xl:grid-cols-4
+      gap-6
+      "
       >
         {loading ? (
-          <p>Loading customers...</p>
+          <p className="text-muted-foreground">Loading customers...</p>
         ) : users.length === 0 ? (
-          <p>No customers found.</p>
+          <p className="text-muted-foreground">No customers found.</p>
         ) : (
           users.map((user) => (
             <div
               key={user.id}
               className="
-              bg-white
-              rounded-2xl
-              border
-              shadow-sm
-              p-5
-              space-y-4
-              "
+            bg-background
+            border
+            border-border
+            rounded-2xl
+            shadow-sm
+            p-5
+            space-y-4
+            "
             >
-              {" "}
               {/* PROFILE */}
+
               <div
                 className="
-                flex
-                items-center
-                gap-4
-                "
+              flex
+              items-center
+              gap-4
+              "
               >
                 <img
                   src={
@@ -257,92 +266,106 @@ const Customers = () => {
                   }
                   alt={user.name}
                   className="
-                  w-16
-                  h-16
-                  rounded-full
-                  object-cover
-                  border
-                  "
+                w-16
+                h-16
+                rounded-full
+                object-cover
+                border
+                border-border
+                "
                 />
 
                 <div>
                   <h2
                     className="
-                    font-semibold
-                    text-lg
-                    "
+                  font-semibold
+                  text-lg
+                  text-foreground
+                  "
                   >
                     {user.name}
                   </h2>
 
                   <span
                     className={`
-                    inline-block
-                    mt-1
-                    px-3
-                    py-1
-                    rounded-full
-                    text-xs
-                    font-medium
-
-                    ${
-                      user.role === "admin"
-                        ? "bg-purple-100 text-purple-700"
-                        : "bg-gray-100 text-gray-700"
-                    }
-
-                    `}
+                  inline-block
+                  mt-1
+                  px-3
+                  py-1
+                  rounded-full
+                  text-xs
+                  font-medium
+                  ${
+                    user.role === "admin"
+                      ? `
+                      bg-purple-100
+                      dark:bg-purple-950
+                      text-purple-700
+                      dark:text-purple-300
+                      `
+                      : `
+                      bg-muted
+                      text-muted-foreground
+                      `
+                  }
+                  `}
                   >
                     {user.role}
                   </span>
                 </div>
               </div>
+
               {/* INFORMATION */}
+
               <div
                 className="
-                space-y-2
-                text-sm
-                "
+              space-y-2
+              text-sm
+              "
               >
                 <div>
-                  <p className="text-gray-500">Email</p>
+                  <p className="text-muted-foreground">Email</p>
 
                   <p
                     className="
-                    font-medium
-                    truncate
-                    "
+                  font-medium
+                  text-foreground
+                  truncate
+                  "
                   >
                     {user.email}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-gray-500">Phone</p>
+                  <p className="text-muted-foreground">Phone</p>
 
-                  <p className="font-medium">{user.phone || "N/A"}</p>
+                  <p className="font-medium text-foreground">
+                    {user.phone || "N/A"}
+                  </p>
                 </div>
 
                 <div>
-                  <p className="text-gray-500">Joined</p>
+                  <p className="text-muted-foreground">Joined</p>
 
-                  <p className="font-medium">
+                  <p className="font-medium text-foreground">
                     {new Date(user.created_at).toLocaleDateString()}
                   </p>
                 </div>
               </div>
+
               {/* ACTIONS */}
+
               <div
                 className="
-                flex
-                flex-col
-                gap-3
-                pt-3
-                border-t
-                "
+              flex
+              flex-col
+              gap-3
+              pt-3
+              border-t
+              border-border
+              "
               >
-                {/* CHANGE ROLE */}
-
                 <Select
                   value={user.role}
                   disabled={updatingId === user.id}
@@ -359,20 +382,18 @@ const Customers = () => {
                   </SelectContent>
                 </Select>
 
-                {/* DELETE */}
-
                 <AlertDialog>
                   <AlertDialogTrigger
                     className="
-                    w-full
-                    bg-red-600
-                    text-white
-                    py-2
-                    rounded-lg
-                    text-sm
-                    hover:bg-red-700
-                    transition
-                    "
+                  w-full
+                  bg-red-600
+                  text-white
+                  py-2
+                  rounded-lg
+                  text-sm
+                  hover:bg-red-700
+                  transition
+                  "
                   >
                     Delete Account
                   </AlertDialogTrigger>
@@ -393,9 +414,9 @@ const Customers = () => {
                       <AlertDialogAction
                         disabled={deletingId === user.id}
                         className="
-                        bg-red-600
-                        hover:bg-red-700
-                        "
+                      bg-red-600
+                      hover:bg-red-700
+                      "
                         onClick={() => deleteUser(user.id)}
                       >
                         {deletingId === user.id ? "Deleting..." : "Delete"}
@@ -407,8 +428,10 @@ const Customers = () => {
             </div>
           ))
         )}
-      </div>{" "}
+      </div>
+
       {/* PAGINATION */}
+
       <Pagination>
         <PaginationContent>
           <PaginationItem>
@@ -428,7 +451,6 @@ const Customers = () => {
             {
               length: totalPages,
             },
-
             (_, index) => index + 1,
           ).map((number) => (
             <PaginationItem key={number}>
@@ -437,7 +459,6 @@ const Customers = () => {
                 isActive={page === number}
                 onClick={(e) => {
                   e.preventDefault();
-
                   setPage(number);
                 }}
               >
