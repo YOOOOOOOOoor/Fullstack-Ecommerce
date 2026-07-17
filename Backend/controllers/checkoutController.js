@@ -294,6 +294,11 @@ export const chapaPayment = async (req, res, next) => {
     );
 
     // 8. Initialize Chapa payment
+    console.log({
+      name,
+      email,
+      amount,
+    });
 
     const response = await axios.post(
       "https://api.chapa.co/v1/transaction/initialize",
