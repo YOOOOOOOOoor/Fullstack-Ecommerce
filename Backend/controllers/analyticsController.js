@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 
 // Dashboard overview cards
-export const getDashboardStats = async (req, res) => {
+export const getDashboardStats = async (req, res, next) => {
   try {
     const stats = await pool.query(`
 
@@ -59,7 +59,7 @@ export const getDashboardStats = async (req, res) => {
 };
 
 // Low stock products list
-export const getLowStockProducts = async (req, res) => {
+export const getLowStockProducts = async (req, res, next) => {
   try {
     const products = await pool.query(`
 
@@ -96,7 +96,7 @@ export const getLowStockProducts = async (req, res) => {
 };
 
 // Recent orders
-export const getRecentOrders = async (req, res) => {
+export const getRecentOrders = async (req, res, next) => {
   try {
     const orders = await pool.query(`
 
@@ -140,7 +140,7 @@ export const getRecentOrders = async (req, res) => {
 };
 
 // Revenue cards
-export const getRevenue = async (req, res) => {
+export const getRevenue = async (req, res, next) => {
   try {
     const revenue = await pool.query(`
 
@@ -210,7 +210,7 @@ export const getRevenue = async (req, res) => {
   }
 };
 
-export const getRevenueChart = async (req, res) => {
+export const getRevenueChart = async (req, res, next) => {
   try {
     const chart = await pool.query(`
  

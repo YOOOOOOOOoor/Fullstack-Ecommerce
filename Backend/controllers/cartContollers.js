@@ -5,7 +5,7 @@ import pool from "../config/db.js";
 dotenv.config();
 
 //creating one
-export const createCart = async (req, res) => {
+export const createCart = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const { product_id, quantity } = req.body;
@@ -64,7 +64,7 @@ export const createCart = async (req, res) => {
       message: "Product added to cart",
     });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({
       message: "Server error",
     });
@@ -72,7 +72,7 @@ export const createCart = async (req, res) => {
 };
 
 //Showing
-export const showCart = async (req, res) => {
+export const showCart = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     // 1. Get user's cart id
@@ -98,13 +98,13 @@ export const showCart = async (req, res) => {
 
     res.status(200).json(cartItems.rows);
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
 //delete
 
-export const deleteCart = async (req, res) => {
+export const deleteCart = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const { product_id } = req.params;
@@ -126,13 +126,13 @@ export const deleteCart = async (req, res) => {
       message: "Product removed from cart",
     });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
 //edit
 
-export const editProuct = async (req, res) => {
+export const editProuct = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const { product_id } = req.params;
@@ -177,11 +177,11 @@ export const editProuct = async (req, res) => {
       message: "Product quantity updated",
     });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
-export const ALLCART = async (req, res) => {
+export const ALLCART = async (req, res, next) => {
   try {
     const user_id = req.user.id;
 
@@ -199,6 +199,6 @@ export const ALLCART = async (req, res) => {
 
     res.status(200).json(totalAmount.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };

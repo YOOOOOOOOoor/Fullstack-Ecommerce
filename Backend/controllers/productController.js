@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 import { v2 as cloudinary } from "cloudinary";
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res, next) => {
   try {
     const {
       title,
@@ -51,24 +51,24 @@ values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning *`,
 
     return res.json(product.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const getColor = async (req, res) => {
+export const getColor = async (req, res, next) => {
   try {
     const result = await pool.query(
       `select distinct color,id from products where stock > 0 and status = 'published'`,
     );
     return res.json(result.rows);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const getProducts = async (req, res) => {
+export const getProducts = async (req, res, next) => {
   try {
     const {
       category,
@@ -158,12 +158,12 @@ export const getProducts = async (req, res) => {
       totalPages: Math.ceil(Number(totalResult.rows[0].total) / pageLimit) || 1,
     });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const getProductsCustomer = async (req, res) => {
+export const getProductsCustomer = async (req, res, next) => {
   try {
     const { category, search, color, price, page = 1, limit = 5 } = req.query;
 
@@ -238,12 +238,12 @@ export const getProductsCustomer = async (req, res) => {
       totalPages: Math.ceil(Number(totalResult.rows[0].total) / pageLimit) || 1,
     });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const getProduct = async (req, res) => {
+export const getProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
@@ -259,12 +259,12 @@ export const getProduct = async (req, res) => {
     }
     return res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const getProductCustomer = async (req, res) => {
+export const getProductCustomer = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
@@ -280,12 +280,12 @@ export const getProductCustomer = async (req, res) => {
     }
     return res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const {
@@ -347,12 +347,12 @@ returning *`,
     );
     return res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const checkProduct = await pool.query(
@@ -368,12 +368,12 @@ export const deleteProduct = async (req, res) => {
     await pool.query(`delete from products where id=$1`, [id]);
     res.json({ message: "Product deleted successfully" });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export const getFeaturedProducts = async (req, res) => {
+export const getFeaturedProducts = async (req, res, next) => {
   try {
     const result = await pool.query(
       `
@@ -393,14 +393,14 @@ export const getFeaturedProducts = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({
       message: "Server error",
     });
   }
 };
 
-export const getRecommendations = async (req, res) => {
+export const getRecommendations = async (req, res, next) => {
   try {
     const { id } = req.params;
 

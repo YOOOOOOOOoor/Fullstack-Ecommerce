@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../config/cloudinary.js";
 
-export const edit = async (req, res) => {
+export const edit = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const { name, email, phone } = req.body;
@@ -86,14 +86,14 @@ RETURNING id, name, email, phone, avatar`,
     );
     return res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
     return res.status(500).json({
       message: "Server error",
     });
   }
 };
 
-export const get = async (req, res) => {
+export const get = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const result = await pool.query(
@@ -105,7 +105,7 @@ export const get = async (req, res) => {
     }
     return res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
     return res.status(500).json({
       message: "Server error",
     });

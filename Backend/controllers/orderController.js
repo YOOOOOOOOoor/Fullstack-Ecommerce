@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 
-export const getOrders = async (req, res) => {
+export const getOrders = async (req, res, next) => {
   try {
     const user_id = req.user.id;
 
@@ -51,8 +51,7 @@ ORDER BY o.created_at DESC;
 
     res.status(200).json(formattedOrders);
   } catch (error) {
-    console.error(error);
-
+    next(error);
     res.status(500).json({
       message: "Server error",
     });
@@ -60,7 +59,7 @@ ORDER BY o.created_at DESC;
 };
 
 //single order
-export const getOrder = async (req, res) => {
+export const getOrder = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const order_id = req.params.id;
@@ -123,8 +122,7 @@ export const getOrder = async (req, res) => {
       })),
     });
   } catch (error) {
-    console.error(error);
-
+    next(error);
     res.status(500).json({
       message: "Server error",
     });
@@ -132,7 +130,7 @@ export const getOrder = async (req, res) => {
 };
 
 //admin order_processing
-export const updateOrderStatus = async (req, res) => {
+export const updateOrderStatus = async (req, res, next) => {
   try {
     const { order_status } = req.body;
     const order_id = req.params.id;
@@ -166,13 +164,13 @@ export const updateOrderStatus = async (req, res) => {
     }
     res.status(200).json({ message: "Order changed  successfully" });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 //admin get all
-export const getOrdersAdmin = async (req, res) => {
+export const getOrdersAdmin = async (req, res, next) => {
   try {
     const {
       search = "",
@@ -315,7 +313,7 @@ export const getOrdersAdmin = async (req, res) => {
       totalPages,
     });
   } catch (error) {
-    console.error(error);
+    next(error);
 
     res.status(500).json({
       message: "Server error",
@@ -323,7 +321,7 @@ export const getOrdersAdmin = async (req, res) => {
   }
 };
 
-export const getOrderAdmin = async (req, res) => {
+export const getOrderAdmin = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const order_id = req.params.id;
@@ -394,7 +392,7 @@ ORDER BY oi.id;
       })),
     });
   } catch (error) {
-    console.error(error);
+    next(error);
 
     res.status(500).json({
       message: "Server error",

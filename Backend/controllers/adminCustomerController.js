@@ -90,7 +90,7 @@ export const getCustomers = async (req, res) => {
   }
 };
 
-export const updateUserRole = async (req, res) => {
+export const updateUserRole = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
@@ -131,7 +131,7 @@ export const updateUserRole = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
 

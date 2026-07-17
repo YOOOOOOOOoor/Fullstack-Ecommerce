@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 
-export const add = async (req, res) => {
+export const add = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const { product_id } = req.body;
@@ -31,11 +31,11 @@ export const add = async (req, res) => {
       message: "Product added to wishlists",
     });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
-export const show = async (req, res) => {
+export const show = async (req, res, next) => {
   try {
     const user_id = req.user.id;
 
@@ -61,11 +61,11 @@ export const show = async (req, res) => {
 
     res.status(200).json(wishlistsItems.rows);
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
-export const remove = async (req, res) => {
+export const remove = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const { product_id } = req.params;
@@ -86,6 +86,6 @@ export const remove = async (req, res) => {
 
     res.json({ message: "Product removed from wishlists" });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };

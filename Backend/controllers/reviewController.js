@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 
 // Check if user can review product
-export const canReview = async (req, res) => {
+export const canReview = async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const { productId } = req.params;
@@ -45,7 +45,7 @@ export const canReview = async (req, res) => {
       hasReviewed: reviewed.rows.length > 0,
     });
   } catch (error) {
-    console.error(error);
+    next(error);
 
     res.status(500).json({
       message: "Server error",
@@ -54,7 +54,7 @@ export const canReview = async (req, res) => {
 };
 
 // Create review
-export const createReview = async (req, res) => {
+export const createReview = async (req, res, next) => {
   try {
     const user_id = req.user.id;
 
@@ -127,7 +127,7 @@ RETURNING *
       review: review.rows[0],
     });
   } catch (error) {
-    console.error(error);
+    next(error);
 
     // duplicate review error
 
@@ -144,7 +144,7 @@ RETURNING *
 };
 
 // Get product reviews
-export const getProductReviews = async (req, res) => {
+export const getProductReviews = async (req, res, next) => {
   try {
     const { productId } = req.params;
 
@@ -207,7 +207,7 @@ WHERE product_id=$1
       reviews: reviews.rows,
     });
   } catch (error) {
-    console.error(error);
+    next(error);
 
     res.status(500).json({
       message: "Server error",
@@ -216,7 +216,7 @@ WHERE product_id=$1
 };
 
 // Update review
-export const updateReview = async (req, res) => {
+export const updateReview = async (req, res, next) => {
   try {
     const user_id = req.user.id;
 
@@ -265,7 +265,7 @@ RETURNING *
       review: result.rows[0],
     });
   } catch (error) {
-    console.error(error);
+    next(error);
 
     res.status(500).json({
       message: "Server error",
@@ -274,7 +274,7 @@ RETURNING *
 };
 
 // Delete review
-export const deleteReview = async (req, res) => {
+export const deleteReview = async (req, res, next) => {
   try {
     const user_id = req.user.id;
 
@@ -305,7 +305,7 @@ RETURNING id
       message: "Review deleted",
     });
   } catch (error) {
-    console.error(error);
+    next(error);
 
     res.status(500).json({
       message: "Server error",

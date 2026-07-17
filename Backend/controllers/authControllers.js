@@ -23,7 +23,7 @@ const tokenGenerate = (id, role) => {
 };
 
 //register
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   const { name, email, password, phone, avatar } = req.body;
   if (!name || !email || !password || !phone) {
     return res.status(400).json({ msg: "Please fill all the fields" });
@@ -62,7 +62,7 @@ export const register = async (req, res) => {
 };
 
 //login
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ msg: "Please fill all the fields" });
@@ -93,7 +93,7 @@ export const login = async (req, res) => {
 };
 
 //me
-export const me = async (req, res) => {
+export const me = async (req, res, next) => {
   res.status(200).json({
     msg: "User logged in successfully",
     user: {
@@ -108,7 +108,7 @@ export const me = async (req, res) => {
 };
 
 //logout
-export const logout = async (req, res) => {
+export const logout = async (req, res, next) => {
   res.clearCookie("token", cookieOptions);
   res.status(200).json({ msg: "User logged out successfully" });
 };

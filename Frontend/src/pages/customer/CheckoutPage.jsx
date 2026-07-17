@@ -1,55 +1,134 @@
 import API from "../../../API/api.js";
 import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+const ethiopiaLocations = {
+  "Addis Ababa": [
+    "Bole",
+    "Yeka",
+    "Arada",
+    "Kirkos",
+    "Lideta",
+    "Nifas Silk-Lafto",
+    "Kolfe Keranio",
+    "Akaki Kaliti",
+    "Gullele",
+  ],
+
+  "Dire Dawa": ["Dire Dawa"],
+
+  Adama: ["Adama"],
+
+  Hawassa: ["Tabor", "Menaharia", "Bahil Adarash"],
+
+  "Bahir Dar": ["Bahir Dar"],
+
+  Mekelle: ["Mekelle"],
+};
 
 const CheckoutPage = () => {
   const [cartAmount, setCartAmount] = useState([]);
+
   const [totalAmount, setTotalAmount] = useState(0);
+
   const [loading, setLoading] = useState(false);
+
   const [user, setUser] = useState({
-    name: "",
-    address: "",
+    receiver_name: "",
+
     email: "",
+
     phone: "",
+
+    city: "",
+
+    sub_city: "",
+
+    address: "",
   });
 
-  // const navigate = useNavigate();
+  // =========================
+  // PAYMENT
+  // =========================
 
   const handlePayment = async () => {
     try {
+      if (
+        !user.receiver_name ||
+        !user.email ||
+        !user.phone ||
+        !user.city ||
+        !user.sub_city ||
+        !user.address
+      ) {
+        toast.error("Please fill in all shipping information.");
+
+        return;
+      }
+
       setLoading(true);
 
-      const res = await API.post("/checkout/chapa");
+      const res = await API.post("/checkout/chapa", {
+        receiver_name: user.receiver_name,
+
+        email: user.email,
+
+        phone: user.phone,
+
+        city: user.city,
+
+        sub_city: user.sub_city,
+
+        address: user.address,
+      });
 
       window.location.href = res.data.data.checkout_url;
     } catch (error) {
       console.log(error.response?.data);
 
+      toast.error(error.response?.data?.message || "Payment failed.");
+
       setLoading(false);
     }
   };
 
+  // =========================
+  // FETCH DATA
+  // =========================
+
   useEffect(() => {
-    const fetchCarts = async () => {
+    const fetchData = async () => {
       try {
         const carts = await API.get("/checkout/cart");
-        const tot = await API.get("/checkout/total");
-        const userInfo = await API.get("/checkout/info");
 
-        setUser(userInfo.data);
-        setTotalAmount(tot.data.total);
+        const total = await API.get("/checkout/total");
+
+        const info = await API.get("/checkout/info");
+
+        setUser({
+          receiver_name: info.data.name || "",
+
+          email: info.data.email || "",
+
+          phone: info.data.phone || "",
+
+          city: "",
+
+          sub_city: "",
+
+          address: "",
+        });
+
         setCartAmount(carts.data);
-        console.log(carts.data);
-        console.log(tot.data.total);
-        console.log(userInfo.data);
+
+        setTotalAmount(Number(total.data.total));
       } catch (error) {
-        console.log(error.response.data.message);
+        console.log(error.response?.data);
       }
     };
 
-    fetchCarts();
+    fetchData();
   }, []);
-
   return (
     <div
       className="
@@ -62,7 +141,7 @@ const CheckoutPage = () => {
     "
     >
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* HEADER */}
 
         <div className="mb-10">
           <h1
@@ -87,7 +166,8 @@ const CheckoutPage = () => {
         gap-8
         "
         >
-          {/* Checkout Form */}
+          {/* CHECKOUT FORM */}
+
           <div
             className="
           lg:col-span-2
@@ -130,21 +210,29 @@ const CheckoutPage = () => {
                 </p>
               </div>
             </div>
+            <div
+              className="
+            grid
+            sm:grid-cols-2
+            gap-5
+            "
+            >
+              {/* RECEIVER NAME */}
 
-            <div className="grid sm:grid-cols-2 gap-5">
               <div>
-                <label className="text-sm font-medium">Full Name</label>
+                <label className="text-sm font-medium">Receiver Name</label>
 
                 <input
                   type="text"
-                  value={user.name}
+                  value={user.receiver_name}
                   onChange={(e) =>
                     setUser({
                       ...user,
-                      name: e.target.value,
+
+                      receiver_name: e.target.value,
                     })
                   }
-                  placeholder="Your name"
+                  placeholder="Full name"
                   className="
                 mt-2
                 w-full
@@ -160,6 +248,8 @@ const CheckoutPage = () => {
                 />
               </div>
 
+              {/* EMAIL */}
+
               <div>
                 <label className="text-sm font-medium">Email</label>
 
@@ -169,6 +259,7 @@ const CheckoutPage = () => {
                   onChange={(e) =>
                     setUser({
                       ...user,
+
                       email: e.target.value,
                     })
                   }
@@ -188,33 +279,7 @@ const CheckoutPage = () => {
                 />
               </div>
 
-              <div className="sm:col-span-2">
-                <label className="text-sm font-medium">Address</label>
-
-                <input
-                  type="text"
-                  value={user.address}
-                  onChange={(e) =>
-                    setUser({
-                      ...user,
-                      address: e.target.value,
-                    })
-                  }
-                  placeholder="Delivery address"
-                  className="
-                mt-2
-                w-full
-                rounded-xl
-                border
-                bg-background
-                px-4
-                py-3
-                outline-none
-                focus:ring-2
-                focus:ring-primary
-                "
-                />
-              </div>
+              {/* PHONE */}
 
               <div>
                 <label className="text-sm font-medium">Phone Number</label>
@@ -225,10 +290,11 @@ const CheckoutPage = () => {
                   onChange={(e) =>
                     setUser({
                       ...user,
+
                       phone: e.target.value,
                     })
                   }
-                  placeholder="Phone number"
+                  placeholder="09xxxxxxxx"
                   className="
                 mt-2
                 w-full
@@ -243,10 +309,119 @@ const CheckoutPage = () => {
                 "
                 />
               </div>
-            </div>
 
-            {/* Payment */}
+              {/* CITY */}
 
+              <div>
+                <label className="text-sm font-medium">City</label>
+
+                <select
+                  value={user.city}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+
+                      city: e.target.value,
+
+                      sub_city: "",
+                    })
+                  }
+                  className="
+                mt-2
+                w-full
+                rounded-xl
+                border
+                bg-background
+                px-4
+                py-3
+                outline-none
+                "
+                >
+                  <option value="">Select City</option>
+
+                  {Object.keys(ethiopiaLocations).map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* SUB CITY */}
+
+              <div>
+                <label className="text-sm font-medium">Sub City</label>
+
+                <select
+                  value={user.sub_city}
+                  disabled={!user.city}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+
+                      sub_city: e.target.value,
+                    })
+                  }
+                  className="
+                mt-2
+                w-full
+                rounded-xl
+                border
+                bg-background
+                px-4
+                py-3
+                outline-none
+                disabled:opacity-50
+                "
+                >
+                  <option value="">Select Sub City</option>
+
+                  {ethiopiaLocations[user.city]?.map((sub) => (
+                    <option key={sub} value={sub}>
+                      {sub}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* ADDRESS / WOREDA */}
+
+              <div
+                className="
+              sm:col-span-2
+              "
+              >
+                <label className="text-sm font-medium">
+                  Woreda / Detailed Address
+                </label>
+
+                <input
+                  type="text"
+                  value={user.address}
+                  onChange={(e) =>
+                    setUser({
+                      ...user,
+
+                      address: e.target.value,
+                    })
+                  }
+                  placeholder="Example: Woreda 03, near Edna Mall"
+                  className="
+                mt-2
+                w-full
+                rounded-xl
+                border
+                bg-background
+                px-4
+                py-3
+                outline-none
+                focus:ring-2
+                focus:ring-primary
+                "
+                />
+              </div>
+            </div>{" "}
+            {/* PAYMENT */}
             <div className="mt-10">
               <h2 className="text-xl font-bold mb-5">Payment Method</h2>
 
@@ -282,8 +457,10 @@ const CheckoutPage = () => {
                 </button>
               </div>
             </div>
-          </div>{" "}
-          {/* Order Summary */}
+          </div>
+
+          {/* ORDER SUMMARY */}
+
           <div
             className="
           bg-card
@@ -329,7 +506,7 @@ const CheckoutPage = () => {
               </span>
             </div>
 
-            {/* Products */}
+            {/* PRODUCTS */}
 
             <div
               className="
@@ -343,50 +520,54 @@ const CheckoutPage = () => {
                 <div
                   key={c.id}
                   className="
-                flex
-                gap-4
-                items-center
-                "
+                  flex
+                  gap-4
+                  items-center
+                  "
                 >
                   <img
                     src={c.image_url}
                     alt={c.title}
                     className="
-                  w-20
-                  h-20
-                  rounded-2xl
-                  object-cover
-                  border
-                  "
+                    w-20
+                    h-20
+                    rounded-2xl
+                    object-cover
+                    border
+                    "
                   />
 
-                  <div className="flex-1">
+                  <div
+                    className="
+                    flex-1
+                    "
+                  >
                     <p
                       className="
-                    font-semibold
-                    line-clamp-1
-                    "
+                      font-semibold
+                      line-clamp-1
+                      "
                     >
                       {c.title}
                     </p>
 
                     <p
                       className="
-                    text-sm
-                    text-muted-foreground
-                    mt-1
-                    "
+                      text-sm
+                      text-muted-foreground
+                      mt-1
+                      "
                     >
-                      {c.quantity} × ${c.price}
+                      {c.quantity} × ETB {Number(c.price).toLocaleString()}
                     </p>
                   </div>
 
                   <p
                     className="
-                  font-bold
-                  "
+                    font-bold
+                    "
                   >
-                    ${(c.quantity * Number(c.price)).toFixed(2)}
+                    ETB {(c.quantity * Number(c.price)).toLocaleString()}
                   </p>
                 </div>
               ))}
@@ -399,7 +580,7 @@ const CheckoutPage = () => {
             "
             />
 
-            {/* Price Details */}
+            {/* PRICE DETAILS */}
 
             <div
               className="
@@ -413,9 +594,21 @@ const CheckoutPage = () => {
               text-sm
               "
               >
-                <span className="text-muted-foreground">Subtotal</span>
+                <span
+                  className="
+                text-muted-foreground
+                "
+                >
+                  Subtotal
+                </span>
 
-                <span className="font-medium">${totalAmount}</span>
+                <span
+                  className="
+                font-medium
+                "
+                >
+                  ETB {Number(totalAmount).toLocaleString()}
+                </span>
               </div>
 
               <div
@@ -425,7 +618,13 @@ const CheckoutPage = () => {
               text-sm
               "
               >
-                <span className="text-muted-foreground">Shipping</span>
+                <span
+                  className="
+                text-muted-foreground
+                "
+                >
+                  Shipping
+                </span>
 
                 <span
                   className="
@@ -461,10 +660,12 @@ const CheckoutPage = () => {
                 font-bold
                 "
                 >
-                  ${totalAmount}
+                  ETB {Number(totalAmount).toLocaleString()}
                 </span>
               </div>
             </div>
+
+            {/* PLACE ORDER */}
 
             <button
               disabled={loading}

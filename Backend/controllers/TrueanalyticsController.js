@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 
-export const getAnalytics = async (req, res) => {
+export const getAnalytics = async (req, res, next) => {
   try {
     const { range = "30" } = req.query;
 
@@ -126,7 +126,7 @@ export const getAnalytics = async (req, res) => {
       bestSellingProducts: bestSellingProducts.rows,
     });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({
       message: "Failed to fetch analytics",
     });

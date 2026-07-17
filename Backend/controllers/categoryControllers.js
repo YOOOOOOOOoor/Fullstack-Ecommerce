@@ -6,7 +6,7 @@ dotenv.config();
 
 //adding
 
-export const Add = async (req, res) => {
+export const Add = async (req, res, next) => {
   try {
     const { name } = req.body;
 
@@ -31,23 +31,23 @@ export const Add = async (req, res) => {
       .status(200)
       .json({ msg: "Category added successfully", category: category.rows[0] });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
 
 //get all categories
-export const getAll = async (req, res) => {
+export const getAll = async (req, res, next) => {
   try {
     const categories = await pool.query("select * from categories");
     res.status(200).json(categories.rows);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
 //get one
-export const One = async (req, res) => {
+export const One = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id) {
@@ -61,13 +61,13 @@ export const One = async (req, res) => {
     }
     res.status(200).json(category.rows[0]);
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
 
 //edit
-export const Edit = async (req, res) => {
+export const Edit = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
@@ -95,13 +95,13 @@ export const Edit = async (req, res) => {
       category: category.rows[0],
     });
   } catch (error) {
-    console.error(error);
+    next(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
 
 //delete
-export const Delete = async (req, res) => {
+export const Delete = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id) {
@@ -130,6 +130,6 @@ export const Delete = async (req, res) => {
 
     res.status(200).json({ msg: "Category deleted successfully" });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
