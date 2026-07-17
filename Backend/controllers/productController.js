@@ -538,3 +538,16 @@ export const getRecommendations = async (req, res, next) => {
     });
   }
 };
+export const getMaxPrice = async (req, res, next) => {
+  try {
+    const result = await pool.query(
+      `SELECT MAX(price) AS max_price FROM products`,
+    );
+
+    res.json({
+      maxPrice: Number(result.rows[0].max_price) || 0,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

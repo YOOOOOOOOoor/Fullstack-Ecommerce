@@ -131,6 +131,24 @@ const Products = () => {
     fetchColor();
   }, []);
 
+  const [maxPrice, setMaxPrice] = useState(100000);
+  const [price, setPrice] = useState([100000]);
+
+  useEffect(() => {
+    const fetchMaxPrice = async () => {
+      try {
+        const res = await API.get("/products/max-price");
+
+        setMaxPrice(res.data.maxPrice);
+        setPrice([res.data.maxPrice]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchMaxPrice();
+  }, []);
+
   const [products, setProducts] = useState([]);
   // const [val, setVal] = useState(1);
   const [page, setPage] = useState(1);
@@ -248,9 +266,9 @@ const Products = () => {
             </div>
 
             <Slider
-              value={[form.price]}
-              max={100000}
-              step={10}
+              value={price}
+              max={maxPrice}
+              step={100}
               onValueChange={(value) =>
                 setForm({
                   ...form,

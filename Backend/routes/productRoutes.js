@@ -13,6 +13,7 @@ import {
   getColor,
   getFeaturedProducts,
   getRecommendations,
+  getMaxPrice,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router.get("/color", getColor);
 router.get("/customer", getProductsCustomer);
 router.get("/customer/:id", getProductCustomer);
 router.get("/featured", getFeaturedProducts);
+router.get("/max-price", getMaxPrice);
 
 // Admin
 router.post("/", protect, Admin, upload.single("image"), createProduct);
