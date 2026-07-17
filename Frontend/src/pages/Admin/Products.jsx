@@ -63,7 +63,7 @@ const Products = () => {
     search: "",
     color: "",
     status: "all",
-    price: 100000,
+    price: "all",
   });
 
   const [category, setCategory] = useState([]);
@@ -108,24 +108,6 @@ const Products = () => {
     };
 
     fetchColor();
-  }, []);
-
-  const [maxPrice, setMaxPrice] = useState(100000);
-  const [price, setPrice] = useState([100000]);
-
-  useEffect(() => {
-    const fetchMaxPrice = async () => {
-      try {
-        const res = await API.get("/products/max-price");
-
-        setMaxPrice(res.data.maxPrice);
-        setPrice([res.data.maxPrice]);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchMaxPrice();
   }, []);
 
   const status = ["all", "published", "draft"];
@@ -281,55 +263,93 @@ const Products = () => {
           {/* Price */}
           <div
             className="
-          bg-gray-50
-          rounded-xl
-          p-4
-        "
+  flex
+  items-center
+  gap-3
+  "
           >
-            <div className="flex justify-between mb-3">
-              <label className="text-sm font-medium">Maximum Price</label>
+            <span
+              className="
+    text-sm
+    font-medium
+    text-muted-foreground
+    whitespace-nowrap
+    "
+            >
+              Maximum Price
+            </span>
 
-              <span className="text-green-700 font-semibold">
-                ${form.price}
-              </span>
-            </div>
-
-            <Slider
-              value={price}
-              max={maxPrice}
-              step={10}
+            <Select
+              value={String(form.price)}
               onValueChange={(value) =>
                 setForm({
                   ...form,
                   price: value,
                 })
               }
-            />
+            >
+              <SelectTrigger
+                className="
+      h-11
+      rounded-xl
+      w-full
+      "
+              >
+                <SelectValue placeholder="Price" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Prices</SelectItem>
+                <SelectItem value="5000">Under 5,000</SelectItem>
+                <SelectItem value="10000">Under 10,000</SelectItem>
+                <SelectItem value="25000">Under 25,000</SelectItem>
+                <SelectItem value="50000">Under 50,000</SelectItem>
+                <SelectItem value="100000">Under 100,000</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Category */}
-          <Select
-            value={form.category}
-            onValueChange={(value) =>
-              setForm({
-                ...form,
-                category: value,
-              })
-            }
+          <div
+            className="
+  flex
+  items-center
+  gap-3
+  "
           >
-            <SelectTrigger className="h-12">
-              <SelectValue>
-                {form.category === "all"
-                  ? "All Categories"
-                  : category.find((c) => String(c.id) === form.category)
-                      ?.name || "Select Category"}
-              </SelectValue>
-            </SelectTrigger>
+            <span
+              className="
+    text-sm
+    font-medium
+    text-muted-foreground
+    whitespace-nowrap
+    "
+            >
+              Category
+            </span>
 
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Category</SelectLabel>
+            <Select
+              value={form.category}
+              onValueChange={(value) =>
+                setForm({
+                  ...form,
+                  category: value,
+                })
+              }
+            >
+              <SelectTrigger
+                className="
+      h-11
+      rounded-xl
+      w-full
+      "
+              >
+                <SelectValue placeholder="Category">
+                  {category.find((c) => String(c.id) === form.category)?.name}
+                </SelectValue>
+              </SelectTrigger>
 
+              <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
 
                 {category.map((c) => (
@@ -337,9 +357,9 @@ const Products = () => {
                     {c.name}
                   </SelectItem>
                 ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Extra Filters */}
@@ -548,13 +568,25 @@ const Products = () => {
                         <img
                           src={c.image_url}
                           alt={c.title}
+                          onLoad={(e) => {
+                            const img = e.currentTarget;
+                            const ratio = img.naturalWidth / img.naturalHeight;
+
+                            if (ratio < 0.8) {
+                              img.className =
+                                "w-14 h-14 rounded-xl object-contain border";
+                            } else {
+                              img.className =
+                                "w-14 h-14 rounded-xl object-cover border";
+                            }
+                          }}
                           className="
-                        w-14
-                        h-14
-                        rounded-xl
-                        object-cover
-                        border
-                      "
+    w-14
+    h-14
+    rounded-xl
+    object-cover
+    border
+  "
                         />
 
                         <div>

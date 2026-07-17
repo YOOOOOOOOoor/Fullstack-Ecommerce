@@ -45,12 +45,13 @@ import {
 import { SearchIcon } from "lucide-react";
 
 const Products = () => {
+  const [imageStyle, setImageStyle] = useState({});
   const navigate = useNavigate();
   const [form, setForm] = useState({
     category: "",
     search: "",
     color: "",
-    price: 100000,
+    price: "all",
   });
 
   // const [cart, setCart] = useEffect({
@@ -131,24 +132,6 @@ const Products = () => {
     fetchColor();
   }, []);
 
-  const [maxPrice, setMaxPrice] = useState(100000);
-  const [price, setPrice] = useState([100000]);
-
-  useEffect(() => {
-    const fetchMaxPrice = async () => {
-      try {
-        const res = await API.get("/products/max-price");
-
-        setMaxPrice(res.data.maxPrice);
-        setPrice([res.data.maxPrice]);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchMaxPrice();
-  }, []);
-
   const [products, setProducts] = useState([]);
   // const [val, setVal] = useState(1);
   const [page, setPage] = useState(1);
@@ -176,15 +159,34 @@ const Products = () => {
   }, [page, form]);
 
   return (
-    <div className="min-h-screen bg-background px-5 sm:px-8 py-10">
+    <div
+      className="
+    min-h-screen
+    bg-background
+    px-4
+    sm:px-6
+    lg:px-10
+    py-8
+    sm:py-12
+    "
+    >
       {/* Header */}
 
-      <div className="max-w-7xl mx-auto mb-10">
+      <div
+        className="
+      max-w-7xl
+      mx-auto
+      mb-8
+      sm:mb-10
+      "
+      >
         <h1
           className="
         text-3xl
+        sm:text-4xl
         font-bold
         text-foreground
+        tracking-tight
         "
         >
           Products
@@ -193,6 +195,8 @@ const Products = () => {
         <p
           className="
         mt-2
+        text-sm
+        sm:text-base
         text-muted-foreground
         "
         >
@@ -208,9 +212,10 @@ const Products = () => {
       mx-auto
       bg-card
       border
-      rounded-xl
+      rounded-2xl
       shadow-sm
-      p-6
+      p-5
+      sm:p-7
       mb-10
       "
       >
@@ -218,7 +223,8 @@ const Products = () => {
           className="
         grid
         md:grid-cols-4
-        gap-6
+        gap-5
+        sm:gap-6
         "
         >
           {/* Search */}
@@ -245,83 +251,113 @@ const Products = () => {
 
           {/* Price */}
 
-          <div>
-            <div
+          <div className="flex items-center gap-3">
+            <span
               className="
-            flex
-            justify-between
-            mb-3
-            "
+    text-sm
+    font-medium
+    text-muted-foreground
+    whitespace-nowrap
+    "
             >
-              <span
-                className="
-              text-sm
-              text-muted-foreground
-              "
-              >
-                Maximum Price
-              </span>
+              Price
+            </span>
 
-              <span className="font-semibold">${form.price}</span>
-            </div>
-
-            <Slider
-              value={price}
-              max={maxPrice}
-              step={100}
+            <Select
+              value={String(form.price)}
               onValueChange={(value) =>
                 setForm({
                   ...form,
                   price: value,
                 })
               }
-            />
+            >
+              <SelectTrigger
+                className="
+      flex-1
+      h-11
+      rounded-xl
+      "
+              >
+                <SelectValue placeholder="All Prices" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Prices</SelectItem>
+                <SelectItem value="5000">Under 5,000</SelectItem>
+                <SelectItem value="10000">Under 10,000</SelectItem>
+                <SelectItem value="25000">Under 25,000</SelectItem>
+                <SelectItem value="50000">Under 50,000</SelectItem>
+                <SelectItem value="100000">Under 100,000</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Category */}
 
-          <Select
-            value={form.category}
-            onValueChange={(value) =>
-              setForm({
-                ...form,
-                category: value,
-              })
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Category">
-                {category.find((c) => String(c.id) === form.category)?.name}
-              </SelectValue>
-            </SelectTrigger>
+          <div className="flex items-center gap-3">
+            <span
+              className="
+    text-sm
+    font-medium
+    text-muted-foreground
+    whitespace-nowrap
+    "
+            >
+              Category
+            </span>
 
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+            <Select
+              value={form.category}
+              onValueChange={(value) =>
+                setForm({
+                  ...form,
+                  category: value,
+                })
+              }
+            >
+              <SelectTrigger
+                className="
+      flex-1
+      h-11
+      rounded-xl
+      "
+              >
+                <SelectValue placeholder="All Categories">
+                  {category.find((c) => String(c.id) === form.category)?.name}
+                </SelectValue>
+              </SelectTrigger>
 
-              {category.map((c) => (
-                <SelectItem key={c.id} value={String(c.id)}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+
+                {category.map((c) => (
+                  <SelectItem key={c.id} value={String(c.id)}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Colors */}
 
         <div
           className="
-        mt-6
+        mt-7
         flex
         items-center
-        gap-4
+        gap-3
         flex-wrap
         "
         >
           <span
             className="
           text-sm
+          font-medium
           text-muted-foreground
+          mr-2
           "
           >
             Colors
@@ -334,15 +370,20 @@ const Products = () => {
                 color: "all",
               })
             }
-            className="
-          border
-          rounded-full
-          px-4
-          py-1
-          text-sm
-          hover:bg-muted
-          transition
-          "
+            className={`
+  border
+  rounded-full
+  px-4
+  py-1.5
+  text-sm
+  transition
+
+  ${
+    form.color === "all"
+      ? "ring-2 ring-primary ring-offset-2"
+      : "hover:bg-muted"
+  }
+  `}
           >
             All
           </button>
@@ -357,19 +398,20 @@ const Products = () => {
                 })
               }
               className={`
-            w-8
-            h-8
-            rounded-full
-            border-2
-            transition
 
-            ${
-              form.color === c.color
-                ? "ring-2 ring-primary ring-offset-2"
-                : "hover:ring-2 hover:ring-muted"
-            }
+              w-8
+              h-8
+              rounded-full
+              border-2
+              transition
 
-            `}
+              ${
+                form.color === c.color
+                  ? "ring-2 ring-primary ring-offset-2"
+                  : "hover:ring-2 hover:ring-muted"
+              }
+
+              `}
               style={{
                 backgroundColor: c.color,
               }}
@@ -387,123 +429,183 @@ const Products = () => {
         sm:grid-cols-2
         lg:grid-cols-3
         xl:grid-cols-4
-        gap-6
+        gap-5
+        sm:gap-6
         "
         >
           {products.map((p) => (
             <div
               key={p.id}
               className="
-          group
-          bg-card
-          border
-          rounded-xl
-          overflow-hidden
-          shadow-sm
-          hover:shadow-md
-          transition
-          "
+              group
+              bg-card
+              border
+              rounded-2xl
+              overflow-hidden
+              shadow-sm
+              hover:shadow-md
+              transition-all
+              duration-300
+              "
             >
+              {/* Image */}
+
               {/* Image */}
 
               <div
                 onClick={() => navigate(`/products/${p.id}`)}
                 className="
-            cursor-pointer
-            overflow-hidden
-            relative
-            "
+  cursor-pointer
+  overflow-hidden
+  bg-muted
+  flex
+  items-center
+  justify-center
+  h-60
+  sm:h-64
+  "
               >
                 <img
                   src={p.image_url}
                   alt={p.title}
-                  className="
-              w-full
-              h-60
-              object-cover
-              group-hover:scale-105
-              transition
-              duration-300
-              "
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+
+                    const ratio = img.naturalWidth / img.naturalHeight;
+
+                    let style = "object-cover";
+
+                    if (ratio < 0.8) {
+                      // very tall image
+                      style = "object-contain";
+                    } else if (ratio > 1.5) {
+                      // very wide image
+                      style = "object-cover";
+                    } else {
+                      // normal image
+                      style = "object-cover";
+                    }
+
+                    setImageStyle((prev) => ({
+                      ...prev,
+                      [p.id]: style,
+                    }));
+                  }}
+                  className={`
+    w-full
+    h-full
+    transition
+    duration-300
+    group-hover:scale-105
+
+    ${imageStyle[p.id] || "object-cover"}
+  `}
                 />
               </div>
-
               {/* Content */}
-
-              <div className="p-5 space-y-3">
+              <div
+                className="
+                p-4
+                sm:p-5
+                space-y-4
+                "
+              >
                 <h2
                   className="
-              text-lg
-              font-semibold
-              truncate
-              "
+                  text-lg
+                  font-semibold
+                  truncate
+                  "
                 >
                   {p.title}
                 </h2>
 
                 <p
                   className="
-              text-sm
-              text-muted-foreground
-              line-clamp-2
-              "
+                  text-sm
+                  text-muted-foreground
+                  line-clamp-2
+                  min-h-[40px]
+                  "
                 >
                   {p.description}
                 </p>
 
+                {/* Price + Color */}
+
                 <div
                   className="
-              flex
-              items-center
-              justify-between
-              "
+                  flex
+                  items-center
+                  justify-between
+                  "
                 >
                   <span
                     className="
-                text-2xl
-                font-bold
-                "
+                    text-xl
+                    sm:text-2xl
+                    font-bold
+                    "
                   >
                     ${p.price}
                   </span>
 
                   <div
                     className="
-                w-7
-                h-7
-                rounded-full
-                border
-                "
+                    w-7
+                    h-7
+                    rounded-full
+                    border
+                    "
                     style={{
                       backgroundColor: p.color,
                     }}
                   />
                 </div>
 
+                {/* Stock */}
+
                 <div>
                   <span
                     className="
-                inline-flex
-                rounded-full
-                bg-muted
-                px-3
-                py-1
-                text-xs
-                text-muted-foreground
-                "
+                    inline-flex
+                    rounded-full
+                    bg-muted
+                    px-3
+                    py-1
+                    text-xs
+                    text-muted-foreground
+                    "
                   >
                     {p.stock} available
                   </span>
                 </div>
 
-                <div className="flex gap-3 pt-2">
-                  <Button className="flex-1" onClick={() => addCarts(p.id)}>
+                {/* Buttons */}
+
+                <div
+                  className="
+                  flex
+                  gap-3
+                  pt-2
+                  "
+                >
+                  <Button
+                    className="
+                    flex-1
+                    rounded-xl
+                    "
+                    onClick={() => addCarts(p.id)}
+                  >
                     Add Cart
                   </Button>
 
                   <Button
                     variant="outline"
                     size="icon"
+                    className="
+                    rounded-xl
+                    "
                     onClick={() => addWishList(p.id)}
                   >
                     ♡
@@ -516,7 +618,14 @@ const Products = () => {
 
         {/* Pagination */}
 
-        <div className="mt-12 flex justify-center">
+        <div
+          className="
+        mt-10
+        sm:mt-14
+        flex
+        justify-center
+        "
+        >
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -537,6 +646,7 @@ const Products = () => {
                     isActive={page === index + 1}
                     onClick={(e) => {
                       e.preventDefault();
+
                       setPage(index + 1);
                     }}
                   >

@@ -164,7 +164,7 @@ const Analytics = () => {
           value={`ETB ${analytics.averageOrder.toFixed(2)}`}
         />
 
-        <Card title="Customers" value={analytics.customers} />
+        <Card title="Customers with Orders" value={analytics.customers} />
       </div>
 
       {/* CHARTS ROW */}

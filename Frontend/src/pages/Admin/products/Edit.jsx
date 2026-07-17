@@ -263,7 +263,25 @@ const Edit = () => {
                 <img
                   src={preview || form.image_url}
                   alt={form.title}
-                  className="h-48 w-48 rounded-xl object-cover border"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    const ratio = img.naturalWidth / img.naturalHeight;
+
+                    if (ratio < 0.8) {
+                      img.className =
+                        "h-48 w-48 rounded-xl object-contain border bg-muted";
+                    } else {
+                      img.className =
+                        "h-48 w-48 rounded-xl object-cover border";
+                    }
+                  }}
+                  className="
+        h-48
+        w-48
+        rounded-xl
+        object-cover
+        border
+      "
                 />
               </div>
             )}
