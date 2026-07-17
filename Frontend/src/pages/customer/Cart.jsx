@@ -13,7 +13,7 @@ const Cart = () => {
     const fetchTotalCarts = async () => {
       try {
         const res = await API.get("/cart/all");
-        console.log("hi,", res.data);
+
         setTotalAmount(res.data.total);
       } catch (error) {
         console.log(error.response.data.message);
@@ -27,7 +27,7 @@ const Cart = () => {
     const fetchCarts = async () => {
       try {
         const res = await API.get("/cart");
-        console.log(res.data);
+
         setCart(res.data);
       } catch (error) {
         console.log(error.response.data.message);
@@ -50,10 +50,10 @@ const Cart = () => {
     let product_id = id;
     const quantity = cart.find((c) => c.product_id === id).quantity + 1;
     try {
-      const res = await API.patch(`/cart/${product_id}`, {
+      await API.patch(`/cart/${product_id}`, {
         quantity,
       });
-      console.log(res.data);
+
       setP(p + 1);
     } catch (error) {
       console.log(error.response.data.message);
@@ -63,10 +63,10 @@ const Cart = () => {
     let product_id = id;
     let quantity = cart.find((c) => c.product_id === id).quantity - 1;
     try {
-      const res = await API.patch(`/cart/${product_id}`, {
+      await API.patch(`/cart/${product_id}`, {
         quantity,
       });
-      console.log(res.data);
+
       setP((prev) => prev + 1);
     } catch (error) {
       console.log(error.response.data.message);

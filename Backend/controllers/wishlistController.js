@@ -45,6 +45,10 @@ export const show = async (req, res, next) => {
       [user_id],
     );
 
+    if (wishlist.rows.length === 0) {
+      return res.status(200).json([]);
+    }
+
     const wishlistsId = wishlist.rows[0].id;
 
     const wishlistsItems = await pool.query(

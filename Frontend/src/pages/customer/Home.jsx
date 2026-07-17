@@ -11,7 +11,6 @@ const Home = ({ user }) => {
     const fetchFeatured = async () => {
       try {
         const res = await API.get("/products/featured");
-        console.log(res.data);
 
         setFeaturedProducts(res.data);
       } catch (error) {

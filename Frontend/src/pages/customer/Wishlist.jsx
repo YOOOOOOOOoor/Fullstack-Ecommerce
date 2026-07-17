@@ -31,7 +31,6 @@ const Wishlist = () => {
   const remove = async (id) => {
     try {
       await API.delete(`/wishlist/${id}`);
-      console.log("or", orders);
 
       toast.success("Product removed from wishlist.");
 
