@@ -353,7 +353,7 @@ const Edit = () => {
                   }
                 />
 
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 w-20">
                   {form.status === "published" ? "Published" : "Draft"}
                 </span>
               </div>
@@ -373,7 +373,7 @@ const Edit = () => {
                   }
                 />
 
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 w-8">
                   {form.featured ? "Yes" : "No"}
                 </span>
               </div>

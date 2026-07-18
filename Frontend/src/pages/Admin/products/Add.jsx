@@ -268,7 +268,7 @@ const Add = () => {
                   }
                 />
 
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 w-8">
                   {form.featured ? "Yes" : "No"}
                 </span>
               </div>
