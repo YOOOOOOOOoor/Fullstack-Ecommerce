@@ -6,8 +6,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
-import { Spinner } from "@/components/ui/spinner";
+import { Slider } from "@/components/ui/slider";
 
 // import {
 //   AlertDialog,
@@ -46,7 +45,6 @@ import {
 import { SearchIcon } from "lucide-react";
 
 const Products = () => {
-  const [loading, setLoading] = useState(true);
   const [imageStyle, setImageStyle] = useState({});
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -142,8 +140,6 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true);
-
         const res = await API.get("/products/customer", {
           params: {
             ...form,
@@ -156,8 +152,6 @@ const Products = () => {
         setTotalPages(res.data.totalPages);
       } catch (error) {
         console.error(error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -176,41 +170,38 @@ const Products = () => {
     sm:py-12
     "
     >
-      <div className="max-w-7xl mx-auto">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Spinner className="size-8" />
+      {/* Header */}
 
-            <p className="mt-4 text-sm text-muted-foreground">
-              Loading products...
-            </p>
-          </div>
-        ) : (
-          <>
-            <h1
-              className="
+      <div
+        className="
+      max-w-7xl
+      mx-auto
+      mb-8
+      sm:mb-10
+      "
+      >
+        <h1
+          className="
         text-3xl
         sm:text-4xl
         font-bold
         text-foreground
         tracking-tight
         "
-            >
-              Products
-            </h1>
+        >
+          Products
+        </h1>
 
-            <p
-              className="
+        <p
+          className="
         mt-2
         text-sm
         sm:text-base
         text-muted-foreground
         "
-            >
-              Explore our collection and find something you love.
-            </p>
-          </>
-        )}
+        >
+          Explore our collection and find something you love.
+        </p>
       </div>
 
       {/* Filters */}
