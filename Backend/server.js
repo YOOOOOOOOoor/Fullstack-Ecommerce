@@ -20,12 +20,16 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 
 dotenv.config();
+
 const app = express();
+
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
 
+// Security headers
 app.use(helmet());
 
+// CORS
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -34,48 +38,88 @@ app.use(
   }),
 );
 
+// Logging
 app.use(morgan("dev"));
 
+// Cookies
 app.use(cookieParser());
 
+// Body parser
 app.use(express.json());
-// RATE LIMITING // =========================
 
+// =========================
+// RATE LIMITING
+// =========================
+
+// General API limiter
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 2000,
-  message: { message: "Too many requests. Try again later." },
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500,
+  message: {
+    message: "Too many requests. Try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
+
 app.use(limiter);
 
 // Auth limiter
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 145,
-  message: { message: "Too many login attempts. Try again later." },
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  message: {
+    message: "Too many login attempts. Try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-//routes
+// Register and login protection only
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
 
-app.use("/api/auth", authLimiter, auth);
+// =========================
+// ROUTES
+// =========================
+
+app.use("/api/auth", auth);
+
 app.use("/api/category", category);
+
 app.use("/api/products", product);
+
 app.use("/api/cart", cart);
+
 app.use("/api/checkout", checkout);
+
 app.use("/api/orders", order);
+
 app.use("/api/wishlist", wishlist);
+
 app.use("/api/reviews", reviews);
+
 app.use("/api/admin/analytics", analytics);
+
 app.use("/api/settings", settings);
+
 app.use("/api/admin/customers", adminCustomerRoutes);
+
 app.use("/api/trueanalytics", trueanalyticsRoutes);
 
-// 404
+// =========================
+// 404 HANDLER
+// =========================
+
 app.use((req, res) => {
   res.status(404).json({
     message: "Route not found",
   });
 });
+
+// =========================
+// ERROR HANDLER
+// =========================
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -84,9 +128,15 @@ app.use((err, req, res, next) => {
     message: err.message || "Something went wrong",
   });
 });
+
+// =========================
+// SERVER
+// =========================
+
 const PORT = process.env.PORT || 8000;
 
 seedAdmin();
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
