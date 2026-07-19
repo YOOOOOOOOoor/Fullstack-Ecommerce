@@ -26,7 +26,7 @@ const Register = ({ user, setUser }) => {
     try {
       setError("");
 
-      if (!form.name || !form.email || !form.password || !form.phone) {
+      if (!form.name || !form.email || !form.password) {
         setError("Please fill in all fields");
         return;
       }
@@ -236,8 +236,13 @@ const Register = ({ user, setUser }) => {
           </div>
 
           <div>
-            <span className="text-xs text-muted-foreground"> optional*</span>
-            <label className="text-sm font-medium">Phone Number</label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Phone Number</label>
+
+              <span className="text-xs text-muted-foreground italic">
+                Optional
+              </span>
+            </div>
 
             <input
               type="tel"
@@ -250,17 +255,17 @@ const Register = ({ user, setUser }) => {
                 })
               }
               className="
-            mt-2
-            w-full
-            border
-            rounded-xl
-            px-4
-            py-3
-            bg-background
-            outline-none
-            focus:ring-2
-            focus:ring-primary
-            "
+      mt-2
+      w-full
+      rounded-xl
+      border
+      bg-background
+      px-4
+      py-3
+      outline-none
+      focus:ring-2
+      focus:ring-primary
+    "
             />
           </div>
 
