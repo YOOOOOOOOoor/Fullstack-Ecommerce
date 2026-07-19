@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import API from "../API/api.js";
 
+import { Spinner } from "@/components/ui/spinner";
+
 // layouts
 import CustomerLayout from "./layouts/CustomerLayout";
 import AdminLayout from "./layouts/AdminLayout";
@@ -57,7 +59,20 @@ function App() {
     fetchUser();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <Spinner className="size-8 mb-5" />
+
+        <h3 className="text-lg font-semibold">Waking up the server...</h3>
+
+        <p className="mt-2 max-w-md text-sm text-muted-foreground">
+          Please wait about <span className="font-medium">20 seconds</span>{" "}
+          while the free backend server starts. This only happens after the
+          server has been inactive for a while.
+        </p>
+      </div>
+    );
 
   return (
     <Router>
