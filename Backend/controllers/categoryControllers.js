@@ -39,7 +39,9 @@ export const Add = async (req, res, next) => {
 //get all categories
 export const getAll = async (req, res, next) => {
   try {
-    const categories = await pool.query("select * from categories");
+    const categories = await pool.query(
+      "select * from categories order by name",
+    );
     res.status(200).json(categories.rows);
   } catch (error) {
     next(error);
