@@ -1,22 +1,22 @@
-// import pg from "pg";
-// const { Pool } = pg;
-// import dotenv from "dotenv";
+import pg from "pg";
+const { Pool } = pg;
+import dotenv from "dotenv";
 
-// dotenv.config();
+dotenv.config();
 
-// const pool = new Pool({
-//   user: process.env.DB_USER,
-//   host: process.env.DB_HOST,
-//   database: process.env.DB_NAME,
-//   password: process.env.DB_PASSWORD,
-//   port: process.env.DB_PORT,
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
-// });
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-// export default pool;
+export default pool;
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -31,31 +31,31 @@
 //////////////////////////////////////////
 //////////////////////////////////////////
 
-import pg from "pg";
-const { Pool } = pg;
-import dotenv from "dotenv";
+// import pg from "pg";
+// const { Pool } = pg;
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
-let pool;
+// let pool;
 
-if (process.env.DATABASE_URL) {
-  // Render + Neon
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-} else {
-  // Local PostgreSQL
-  pool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-  });
-}
+// if (process.env.DATABASE_URL) {
+//   // Render + Neon
+//   pool = new Pool({
+//     connectionString: process.env.DATABASE_URL,
+//     ssl: {
+//       rejectUnauthorized: false,
+//     },
+//   });
+// } else {
+//   // Local PostgreSQL
+//   pool = new Pool({
+//     host: process.env.DB_HOST,
+//     port: process.env.DB_PORT,
+//     database: process.env.DB_NAME,
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//   });
+// }
 
-export default pool;
+// export default pool;
