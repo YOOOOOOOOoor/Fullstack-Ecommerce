@@ -53,40 +53,40 @@ const Analytics = () => {
           revenue: Number(item.revenue),
         })),
 
-        // revenueTrend: data.revenueTrend.map((item) => ({
-        //   ...item,
-        //   date: new Date(item.date).toLocaleDateString("en-US", {
-        //     month: "short",
-        //     day: "numeric",
-        //   }),
-        //   revenue: Number(item.revenue),
-        // })),
+        revenueTrend: data.revenueTrend.map((item) => ({
+          ...item,
+          date: new Date(item.date).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+          revenue: Number(item.revenue),
+        })),
 
-        revenueTrend: (() => {
-          const trend = data.revenueTrend.map((item) => ({
-            ...item,
-            date: new Date(item.date).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            }),
-            revenue: Number(item.revenue),
-          }));
+        // revenueTrend: (() => {
+        //   const trend = data.revenueTrend.map((item) => ({
+        //     ...item,
+        //     date: new Date(item.date).toLocaleDateString("en-US", {
+        //       month: "short",
+        //       day: "numeric",
+        //     }),
+        //     revenue: Number(item.revenue),
+        //   }));
 
-          if (trend.length === 1) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
+        //   if (trend.length === 1) {
+        //     const yesterday = new Date();
+        //     yesterday.setDate(yesterday.getDate() - 1);
 
-            trend.unshift({
-              date: yesterday.toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              }),
-              revenue: 0,
-            });
-          }
+        //     trend.unshift({
+        //       date: yesterday.toLocaleDateString("en-US", {
+        //         month: "short",
+        //         day: "numeric",
+        //       }),
+        //       revenue: 0,
+        //     });
+        //   }
 
-          return trend;
-        })(),
+        //   return trend;
+        // })(),
 
         /////////////////////////////////////
 

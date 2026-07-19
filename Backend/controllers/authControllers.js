@@ -33,7 +33,7 @@ const tokenGenerate = (id, role) => {
 //register
 export const register = async (req, res, next) => {
   const { name, email, password, phone, avatar } = req.body;
-  if (!name || !email || !password || !phone) {
+  if (!name || !email || !password) {
     return res.status(400).json({ msg: "Please fill all the fields" });
   }
 

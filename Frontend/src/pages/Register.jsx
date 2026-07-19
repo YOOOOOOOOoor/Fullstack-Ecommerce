@@ -236,6 +236,7 @@ const Register = ({ user, setUser }) => {
           </div>
 
           <div>
+            <span className="text-xs text-muted-foreground"> optional*</span>
             <label className="text-sm font-medium">Phone Number</label>
 
             <input
